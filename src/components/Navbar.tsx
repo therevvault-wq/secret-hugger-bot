@@ -34,20 +34,22 @@ export const Navbar = () => {
                 onMouseEnter={() => setActiveDropdown("aesthetics")} 
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="nav-link font-medium flex items-center gap-1">
+                <button className="nav-link font-medium flex items-center gap-1 py-4">
                   Aesthetics <ChevronDown className="w-4 h-4" />
                 </button>
                 {activeDropdown === "aesthetics" && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-2xl p-4 animate-fade-in">
-                    {aestheticsItems.map(item => (
-                      <Link 
-                        key={item} 
-                        to={`/shop?category=${encodeURIComponent(item)}`} 
-                        className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors"
-                      >
-                        {item}
-                      </Link>
-                    ))}
+                  <div className="absolute top-full left-0 pt-2 z-50">
+                    <div className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4 animate-fade-in">
+                      {aestheticsItems.map(item => (
+                        <Link 
+                          key={item} 
+                          to={`/shop?category=${encodeURIComponent(item)}`} 
+                          className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors"
+                        >
+                          {item}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -58,20 +60,22 @@ export const Navbar = () => {
                 onMouseEnter={() => setActiveDropdown("performance")} 
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="nav-link font-medium flex items-center gap-1">
+                <button className="nav-link font-medium flex items-center gap-1 py-4">
                   Performance <ChevronDown className="w-4 h-4" />
                 </button>
                 {activeDropdown === "performance" && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-2xl p-4 animate-fade-in">
-                    {performanceItems.map(item => (
-                      <Link 
-                        key={item} 
-                        to={`/shop?category=${encodeURIComponent(item)}`} 
-                        className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors"
-                      >
-                        {item}
-                      </Link>
-                    ))}
+                  <div className="absolute top-full left-0 pt-2 z-50">
+                    <div className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4 animate-fade-in">
+                      {performanceItems.map(item => (
+                        <Link 
+                          key={item} 
+                          to={`/shop?category=${encodeURIComponent(item)}`} 
+                          className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors"
+                        >
+                          {item}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
