@@ -3,15 +3,26 @@ import { ShopifyProduct, fetchProducts } from "@/lib/shopify";
 import { ProductCard } from "./ProductCard";
 import { Loader2 } from "lucide-react";
 
-export const ProductGrid = () => {
+interface ProductGridProps {
+  category?: string | null;
+}
+
+export const ProductGrid = ({ category }: ProductGridProps) => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProducts = async () => {
+      setLoading(true);
       try {
-        const data = await fetchProducts(20);
+        // Build search query based on category
+        let query: string | undefined;
+        if (category) {
+          // Search by product_type which matches category names
+          query = `product_type:${category}`;
+        }
+        const data = await fetchProducts(20, query);
         setProducts(data);
       } catch (err) {
         setError("Failed to load products");
@@ -22,7 +33,7 @@ export const ProductGrid = () => {
     };
 
     loadProducts();
-  }, []);
+  }, [category]);
 
   if (loading) {
     return (
@@ -43,7 +54,9 @@ export const ProductGrid = () => {
   if (products.length === 0) {
     return (
       <div className="text-center py-20 bg-card border border-border rounded-xl">
-        <p className="text-muted-foreground text-lg mb-2">No products found</p>
+        <p className="text-muted-foreground text-lg mb-2">
+          {category ? `No products found in "${category}"` : "No products found"}
+        </p>
         <p className="text-sm text-muted-foreground">
           Ask the chat to create a product by describing what you want to sell.
         </p>
