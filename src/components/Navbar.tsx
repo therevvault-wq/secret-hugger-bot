@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Search, ShoppingCart, User, ChevronDown } from "lucide-react";
+import { Menu, X, Search, User, ChevronDown, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchModal } from "@/components/SearchModal";
+import { CartDrawer } from "@/components/CartDrawer";
 import logoNavbar from "@/assets/logo-navbar.png";
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
@@ -75,6 +76,7 @@ export const Navbar = () => {
                 )}
               </div>
 
+              <Link to="/shop" className="nav-link font-medium">Shop</Link>
               <Link to="/blog" className="nav-link font-medium">Blog</Link>
             </div>
 
@@ -93,14 +95,7 @@ export const Navbar = () => {
                   <User className="w-5 h-5" />
                 </Button>
               </Link>
-              <Link to="/cart">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
-                    0
-                  </span>
-                </Button>
-              </Link>
+              <CartDrawer />
             </div>
 
             {/* Mobile Menu Button */}
