@@ -47,6 +47,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        rev: {
+          black: "hsl(var(--rev-black))",
+          dark: "hsl(var(--rev-dark))",
+          gray: "hsl(var(--rev-gray))",
+          "light-gray": "hsl(var(--rev-light-gray))",
+          red: "hsl(var(--rev-red))",
+          "red-glow": "hsl(var(--rev-red-glow))",
+          white: "hsl(var(--rev-white))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -58,6 +67,10 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+        display: ["Bebas Neue", "sans-serif"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -65,25 +78,37 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+        "marquee-reverse": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0%)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        marquee: "marquee 25s linear infinite",
+        "marquee-reverse": "marquee-reverse 25s linear infinite",
+        shimmer: "shimmer 2s linear infinite",
+        "spin-slow": "spin 4s linear infinite",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "carbon-fiber": "repeating-linear-gradient(45deg, transparent, transparent 2px, hsl(var(--rev-gray) / 0.1) 2px, hsl(var(--rev-gray) / 0.1) 4px)",
       },
     },
   },
