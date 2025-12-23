@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, X, Search, ShoppingCart, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchModal } from "@/components/SearchModal";
+import logoNavbar from "@/assets/logo-navbar.png";
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
 const performanceItems = ["Air Intakes", "Exhaust Systems", "ECU Tuning", "Suspension", "Brake Kits", "Turbo Kits", "Intercoolers", "Performance Filters"];
@@ -19,9 +20,7 @@ export const Navbar = () => {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center">
-              <span className="font-display text-2xl tracking-wider">
-                THE<span className="text-primary">REV</span>VAULT
-              </span>
+              <img src={logoNavbar} alt="The Rev Vault" className="h-12 w-auto" />
             </Link>
 
             {/* Desktop Navigation */}
