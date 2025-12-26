@@ -1,52 +1,44 @@
-import { Shield, Truck, Award, Headphones } from "lucide-react";
+import { Award, BadgeCheck, Puzzle, Truck, Percent } from "lucide-react";
 
 const features = [
   {
-    icon: Shield,
-    title: "100% Authentic",
-    description: "All products are sourced directly from authorized dealers worldwide",
+    icon: Award,
+    title: "Find Top Brands",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Genuine Products Guaranteed",
+  },
+  {
+    icon: Puzzle,
+    title: "Easy Compatibility Check",
   },
   {
     icon: Truck,
-    title: "Pan-India Delivery",
-    description: "Fast and secure shipping to all major cities across India",
+    title: "Fast & Free Delivery",
   },
   {
-    icon: Award,
-    title: "Expert Installation",
-    description: "Professional fitment services at partner workshops nationwide",
-  },
-  {
-    icon: Headphones,
-    title: "Dedicated Support",
-    description: "Expert consultation for choosing the right parts for your build",
+    icon: Percent,
+    title: "Discount Deals",
   },
 ];
 
 export const WhyChooseUs = () => {
   return (
-    <section className="section-padding">
+    <section className="py-12 bg-secondary/30">
       <div className="container-rev">
-        <div className="text-center mb-12">
-          <span className="text-primary text-sm font-medium uppercase tracking-widest">
-            Our Promise
-          </span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground mt-2">
-            WHY <span className="text-primary">THEREVVAULT</span>
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex flex-wrap justify-center gap-8 md:gap-12 lg:gap-16">
           {features.map((feature, i) => (
             <div
               key={i}
-              className="group p-6 bg-card border border-border rounded-xl hover:border-primary/50 transition-all duration-300"
+              className="flex flex-col items-center text-center max-w-[140px]"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <feature.icon className="w-7 h-7 text-primary" />
+              <div className="w-16 h-16 flex items-center justify-center mb-3">
+                <feature.icon className="w-12 h-12 text-muted-foreground stroke-[1.5]" />
               </div>
-              <h3 className="font-display text-xl text-foreground mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm">{feature.description}</p>
+              <span className="text-sm font-medium text-muted-foreground leading-tight">
+                {feature.title}
+              </span>
             </div>
           ))}
         </div>
