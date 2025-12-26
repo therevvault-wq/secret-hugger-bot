@@ -71,13 +71,31 @@ export const Footer = () => {
           <div>
             <h5 className="font-display text-lg text-foreground mb-4">SUPPORT</h5>
             <ul className="space-y-3">
-              {["FAQs", "Shipping Info", "Returns", "Track Order", "Contact Us"].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                    {link}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/refund-policy" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/shipping-policy" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/sell-on-therevvault" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Sell on THEREVVAULT
+                </Link>
+              </li>
             </ul>
           </div>
 
