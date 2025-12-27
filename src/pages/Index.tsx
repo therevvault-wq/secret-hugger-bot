@@ -7,6 +7,7 @@ import { BlogSection } from "@/components/BlogSection";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { OffersSection } from "@/components/OffersSection";
 import { ContactSection } from "@/components/ContactSection";
+import { InstagramFeed } from "@/components/InstagramFeed";
 import { Testimonials } from "@/components/Testimonials";
 import { Footer } from "@/components/Footer";
 import { RotatingLogo } from "@/components/RotatingLogo";
@@ -40,7 +41,10 @@ const Index = () => {
         {/* 8. How can we assist you today (Contact Us) */}
         <ContactSection />
         
-        {/* 9. Testimonials */}
+        {/* 9. Instagram Feed */}
+        <InstagramFeed />
+        
+        {/* 10. Testimonials */}
         <Testimonials />
       </main>
       <Footer />
