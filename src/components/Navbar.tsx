@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X, Search, User, ChevronDown, ShoppingCart } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, Search, User, ChevronDown, ShoppingCart, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchModal } from "@/components/SearchModal";
 import { CartDrawer } from "@/components/CartDrawer";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import logoNavbar from "@/assets/logo-navbar.png";
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
@@ -13,6 +21,14 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  
+  const { user, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <>
@@ -94,11 +110,41 @@ export const Navbar = () => {
               >
                 <Search className="w-5 h-5" />
               </Button>
-              <Link to="/account">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                  <User className="w-5 h-5" />
-                </Button>
-              </Link>
+              
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                      <User className="w-5 h-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                      {user.email}
+                    </div>
+                    <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="cursor-pointer">
+                          <Shield className="w-4 h-4 mr-2" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </Link>
+              )}
+              
               <CartDrawer />
             </div>
 
@@ -141,9 +187,30 @@ export const Navbar = () => {
                 </div>
                 <Link to="/blog" className="text-foreground font-medium py-2" onClick={() => setIsOpen(false)}>Blog</Link>
                 <div className="flex items-center gap-4 pt-4 border-t border-border">
-                  <Link to="/account" className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full" onClick={() => setIsOpen(false)}>Login</Button>
-                  </Link>
+                  {user ? (
+                    <>
+                      {isAdmin && (
+                        <Link to="/admin" className="flex-1" onClick={() => setIsOpen(false)}>
+                          <Button variant="outline" size="sm" className="w-full">Admin</Button>
+                        </Link>
+                      )}
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => {
+                          handleSignOut();
+                          setIsOpen(false);
+                        }}
+                        className="flex-1"
+                      >
+                        Sign Out
+                      </Button>
+                    </>
+                  ) : (
+                    <Link to="/auth" className="flex-1" onClick={() => setIsOpen(false)}>
+                      <Button variant="outline" size="sm" className="w-full">Login</Button>
+                    </Link>
+                  )}
                   <Button 
                     variant="ghost" 
                     size="icon" 
@@ -154,11 +221,7 @@ export const Navbar = () => {
                   >
                     <Search className="w-5 h-5" />
                   </Button>
-                  <Link to="/cart">
-                    <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-                      <ShoppingCart className="w-5 h-5" />
-                    </Button>
-                  </Link>
+                  <CartDrawer />
                 </div>
               </div>
             </div>
