@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Play } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import heroVideo from "@/assets/hero-video.mp4";
 
 export const HeroSection = () => {
@@ -49,9 +49,6 @@ export const HeroSection = () => {
             <Button size="lg" className="btn-primary text-base px-8">
               Shop Now <ChevronRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" className="btn-outline-white text-base px-8">
-              <Play className="w-5 h-5 mr-2" /> Watch Video
-            </Button>
           </div>
 
           {/* Stats */}
@@ -75,12 +72,6 @@ export const HeroSection = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 animate-bounce">
-        <div className="w-6 h-10 border-2 border-muted-foreground rounded-full flex justify-center">
-          <div className="w-1 h-2 bg-primary rounded-full mt-2 animate-pulse" />
-        </div>
-      </div>
     </section>
   );
 };
