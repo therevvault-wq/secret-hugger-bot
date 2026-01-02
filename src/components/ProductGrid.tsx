@@ -4,10 +4,13 @@ import { ProductCard } from "./ProductCard";
 import { Loader2 } from "lucide-react";
 
 interface ProductGridProps {
+  brand?: string | null;
+  model?: string | null;
+  year?: string | null;
   category?: string | null;
 }
 
-export const ProductGrid = ({ category }: ProductGridProps) => {
+export const ProductGrid = ({ brand, model, year, category }: ProductGridProps) => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -16,12 +19,21 @@ export const ProductGrid = ({ category }: ProductGridProps) => {
     const loadProducts = async () => {
       setLoading(true);
       try {
-        // Build search query based on category
-        let query: string | undefined;
-        if (category) {
-          // Search by product_type which matches category names
-          query = `product_type:${category}`;
-        }
+        // Build search query from filters
+        // Shopify tags should be set as: Toyota, Supra, 2020
+        // Product type should be: Aesthetics or Performance
+        const queryParts: string[] = [];
+        
+        // Tags for vehicle compatibility (brand, model, year)
+        if (brand) queryParts.push(`tag:${brand}`);
+        if (model) queryParts.push(`tag:${model}`);
+        if (year) queryParts.push(`tag:${year}`);
+        
+        // Product type for category
+        if (category) queryParts.push(`product_type:${category}`);
+        
+        const query = queryParts.length > 0 ? queryParts.join(" AND ") : undefined;
+        
         const data = await fetchProducts(20, query);
         setProducts(data);
       } catch (err) {
@@ -33,7 +45,9 @@ export const ProductGrid = ({ category }: ProductGridProps) => {
     };
 
     loadProducts();
-  }, [category]);
+  }, [brand, model, year, category]);
+
+  const hasFilters = brand || model || year || category;
 
   if (loading) {
     return (
@@ -55,7 +69,7 @@ export const ProductGrid = ({ category }: ProductGridProps) => {
     return (
       <div className="text-center py-20 bg-card border border-border rounded-xl">
         <p className="text-muted-foreground text-lg mb-2">
-          {category ? `No products found in "${category}"` : "No products found"}
+          {hasFilters ? "No products found for this vehicle" : "No products found"}
         </p>
         <p className="text-sm text-muted-foreground">
           Ask the chat to create a product by describing what you want to sell.

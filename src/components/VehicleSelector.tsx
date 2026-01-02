@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Car } from "lucide-react";
@@ -19,12 +20,25 @@ const models: Record<string, string[]> = {
 const years = ["2024", "2023", "2022", "2021", "2020", "2019", "2018"];
 
 export const VehicleSelector = () => {
+  const navigate = useNavigate();
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   const availableModels = selectedBrand ? models[selectedBrand] || [] : [];
+
+  const handleSearch = () => {
+    // Build search params from selections
+    const params = new URLSearchParams();
+    
+    if (selectedBrand) params.set("brand", selectedBrand);
+    if (selectedModel) params.set("model", selectedModel);
+    if (selectedYear) params.set("year", selectedYear);
+    if (selectedCategory) params.set("category", selectedCategory);
+    
+    navigate(`/shop?${params.toString()}`);
+  };
 
   return (
     <section className="section-padding bg-gradient-to-b from-background to-secondary/20">
@@ -89,8 +103,8 @@ export const VehicleSelector = () => {
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="aesthetics">Aesthetics</SelectItem>
-                  <SelectItem value="performance">Performance</SelectItem>
+                  <SelectItem value="Aesthetics">Aesthetics</SelectItem>
+                  <SelectItem value="Performance">Performance</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -98,6 +112,7 @@ export const VehicleSelector = () => {
             <Button
               className="w-full h-14 btn-primary text-lg"
               disabled={!selectedCategory}
+              onClick={handleSearch}
             >
               <Search className="w-5 h-5 mr-2" />
               Search Products
