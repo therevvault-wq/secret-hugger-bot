@@ -106,7 +106,7 @@ const ProductDetail = () => {
                   <img
                     src={images[selectedImage].node.url}
                     alt={images[selectedImage].node.altText || product.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -128,7 +128,7 @@ const ProductDetail = () => {
                       <img
                         src={img.node.url}
                         alt={img.node.altText || `${product.title} ${idx + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </button>
                   ))}
