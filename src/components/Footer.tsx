@@ -1,4 +1,4 @@
-import { Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
@@ -48,6 +48,14 @@ export const Footer = () => {
                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary transition-colors"
               >
                 <Instagram className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://wa.me/919717820775" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary transition-colors"
+              >
+                <MessageCircle className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -110,7 +118,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground text-sm">+91 98765 43210</span>
+                <a href="tel:+919717820775" className="text-muted-foreground text-sm hover:text-primary transition-colors">+91 97178 20775</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
