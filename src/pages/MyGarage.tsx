@@ -17,9 +17,10 @@ interface Vehicle {
   id: string;
   make: string;
   model: string;
-  year: string;
+  year: number;
   fuel_type: string;
-  nickname?: string;
+  nickname?: string | null;
+  variant?: string | null;
 }
 
 const brands = [
@@ -88,10 +89,10 @@ export default function MyGarage() {
       const { error } = await supabase
         .from('user_vehicles')
         .insert({
-          user_id: user?.id,
+          user_id: user?.id as string,
           make,
           model,
-          year,
+          year: parseInt(year),
           fuel_type: fuelType,
           nickname: nickname || null,
         });

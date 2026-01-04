@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SearchModal } from "@/components/SearchModal";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -81,16 +82,25 @@ export const Navbar = () => {
                 </button>
                 {activeDropdown === "aesthetics" && (
                   <div className="absolute top-full left-0 pt-2 z-50">
-                    <div className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4 animate-fade-in">
-                      {aestheticsItems.map(item => (
-                        <span 
-                          key={item} 
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4"
+                    >
+                      {aestheticsItems.map((item, i) => (
+                        <motion.span 
+                          key={item}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.15, delay: i * 0.03 }}
                           className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors cursor-default"
                         >
                           {item}
-                        </span>
+                        </motion.span>
                       ))}
-                    </div>
+                    </motion.div>
                   </div>
                 )}
               </div>
@@ -106,16 +116,25 @@ export const Navbar = () => {
                 </button>
                 {activeDropdown === "performance" && (
                   <div className="absolute top-full left-0 pt-2 z-50">
-                    <div className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4 animate-fade-in">
-                      {performanceItems.map(item => (
-                        <span 
-                          key={item} 
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4"
+                    >
+                      {performanceItems.map((item, i) => (
+                        <motion.span 
+                          key={item}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.15, delay: i * 0.03 }}
                           className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors cursor-default"
                         >
                           {item}
-                        </span>
+                        </motion.span>
                       ))}
-                    </div>
+                    </motion.div>
                   </div>
                 )}
               </div>
@@ -213,72 +232,89 @@ export const Navbar = () => {
           </div>
 
           {/* Mobile Menu */}
-          {isOpen && (
-            <div className="lg:hidden py-6 border-t border-border animate-fade-in">
-              <div className="flex flex-col gap-4">
-                <Link to="/" className="text-foreground font-medium py-2" onClick={() => setIsOpen(false)}>Home</Link>
-                <div>
-                  <p className="text-primary font-medium mb-2">Aesthetics</p>
-                  {aestheticsItems.slice(0, 4).map(item => (
-                    <span 
-                      key={item} 
-                      className="block py-1.5 pl-4 text-muted-foreground"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-                <div>
-                  <p className="text-primary font-medium mb-2">Performance</p>
-                  {performanceItems.slice(0, 4).map(item => (
-                    <span 
-                      key={item} 
-                      className="block py-1.5 pl-4 text-muted-foreground"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-                <Link to="/blog" className="text-foreground font-medium py-2" onClick={() => setIsOpen(false)}>Blog</Link>
-                <div className="flex items-center gap-4 pt-4 border-t border-border">
-                  {user ? (
-                    <>
-                      {isAdmin && (
-                        <Link to="/admin" className="flex-1" onClick={() => setIsOpen(false)}>
-                          <Button variant="outline" size="sm" className="w-full">Admin</Button>
-                        </Link>
-                      )}
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => {
-                          handleSignOut();
-                          setIsOpen(false);
-                        }}
-                        className="flex-1"
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="lg:hidden py-6 border-t border-border overflow-hidden"
+              >
+                <div className="flex flex-col gap-4">
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+                    <Link to="/" className="text-foreground font-medium py-2 block" onClick={() => setIsOpen(false)}>Home</Link>
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
+                    <p className="text-primary font-medium mb-2">Aesthetics</p>
+                    {aestheticsItems.slice(0, 4).map((item, i) => (
+                      <span 
+                        key={item} 
+                        className="block py-1.5 pl-4 text-muted-foreground"
                       >
-                        Sign Out
-                      </Button>
-                    </>
-                  ) : (
-                    <Link to="/auth" className="flex-1" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" size="sm" className="w-full">Login</Button>
-                    </Link>
-                  )}
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => {
-                      setIsOpen(false);
-                      setSearchOpen(true);
-                    }}
+                        {item}
+                      </span>
+                    ))}
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+                    <p className="text-primary font-medium mb-2">Performance</p>
+                    {performanceItems.slice(0, 4).map((item, i) => (
+                      <span 
+                        key={item} 
+                        className="block py-1.5 pl-4 text-muted-foreground"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
+                    <Link to="/blog" className="text-foreground font-medium py-2 block" onClick={() => setIsOpen(false)}>Blog</Link>
+                  </motion.div>
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }} 
+                    animate={{ opacity: 1, x: 0 }} 
+                    transition={{ delay: 0.3 }}
+                    className="flex items-center gap-4 pt-4 border-t border-border"
                   >
-                    <Search className="w-5 h-5" />
-                  </Button>
+                    {user ? (
+                      <>
+                        {isAdmin && (
+                          <Link to="/admin" className="flex-1" onClick={() => setIsOpen(false)}>
+                            <Button variant="outline" size="sm" className="w-full">Admin</Button>
+                          </Link>
+                        )}
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => {
+                            handleSignOut();
+                            setIsOpen(false);
+                          }}
+                          className="flex-1"
+                        >
+                          Sign Out
+                        </Button>
+                      </>
+                    ) : (
+                      <Link to="/auth" className="flex-1" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" size="sm" className="w-full">Login</Button>
+                      </Link>
+                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => {
+                        setIsOpen(false);
+                        setSearchOpen(true);
+                      }}
+                    >
+                      <Search className="w-5 h-5" />
+                    </Button>
+                  </motion.div>
                 </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </nav>
 

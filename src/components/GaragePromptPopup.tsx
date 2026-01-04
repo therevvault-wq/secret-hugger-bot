@@ -79,12 +79,12 @@ export const GaragePromptPopup = () => {
       const { error } = await supabase
         .from('user_vehicles')
         .insert({
-          user_id: user?.id,
-          make,
-          model,
-          year,
-          fuel_type: fuelType,
-        });
+        user_id: user?.id as string,
+        make,
+        model,
+        year: parseInt(year),
+        fuel_type: fuelType,
+      });
 
       if (error) throw error;
 
