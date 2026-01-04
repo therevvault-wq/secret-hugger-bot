@@ -134,7 +134,7 @@ export const Footer = () => {
         <div className="container-rev py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-muted-foreground text-sm">
-              © 2024 TheRevVault. All rights reserved.
+              © {new Date().getFullYear()} TheRevVault. All rights reserved.
             </p>
             <div className="flex gap-6">
               <Link to="/privacy" className="text-muted-foreground hover:text-foreground text-sm">Privacy Policy</Link>
