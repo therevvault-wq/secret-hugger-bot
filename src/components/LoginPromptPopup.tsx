@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Chrome, X } from 'lucide-react';
+import { Chrome } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const LoginPromptPopup = () => {
@@ -64,16 +64,10 @@ export const LoginPromptPopup = () => {
   if (user) return null;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) handleDismiss();
+    }}>
       <DialogContent className="sm:max-w-md">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-4 top-4"
-          onClick={handleDismiss}
-        >
-          <X className="w-4 h-4" />
-        </Button>
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">
             Join TheRevVault!
