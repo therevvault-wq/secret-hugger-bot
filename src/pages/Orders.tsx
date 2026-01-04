@@ -42,7 +42,12 @@ export default function Orders() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      // Parse items from JSON if needed
+      const parsedOrders = (data || []).map(order => ({
+        ...order,
+        items: Array.isArray(order.items) ? order.items : []
+      }));
+      setOrders(parsedOrders);
     } catch (error: any) {
       toast.error('Failed to fetch orders', {
         description: error.message,
