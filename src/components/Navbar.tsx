@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Search, User, ChevronDown, LogOut, Shield, Package, UserCircle, MapPin, Gift } from "lucide-react";
+import { Menu, X, Search, User, ChevronDown, LogOut, Shield, Package, UserCircle, MapPin, Gift, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchModal } from "@/components/SearchModal";
 import { useAuth } from "@/hooks/useAuth";
