@@ -12,6 +12,8 @@ import { Testimonials } from "@/components/Testimonials";
 import { Footer } from "@/components/Footer";
 import { RotatingLogo } from "@/components/RotatingLogo";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { LoginPromptPopup } from "@/components/LoginPromptPopup";
+import { GaragePromptPopup } from "@/components/GaragePromptPopup";
 
 const Index = () => {
   return (
@@ -42,15 +44,19 @@ const Index = () => {
         {/* 8. How can we assist you today (Contact Us) */}
         <ContactSection />
         
-        {/* 9. Instagram Feed */}
-        <InstagramFeed />
-        
-        {/* 10. Testimonials */}
+        {/* 9. Testimonials */}
         <Testimonials />
+        
+        {/* 10. Instagram Feed */}
+        <InstagramFeed />
       </main>
       <Footer />
       <RotatingLogo />
       <ScrollToTop />
+      
+      {/* Popups */}
+      <LoginPromptPopup />
+      <GaragePromptPopup />
     </div>
   );
 };

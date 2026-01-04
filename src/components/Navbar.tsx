@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Search, User, ChevronDown, LogOut, Shield } from "lucide-react";
+import { Menu, X, Search, User, ChevronDown, LogOut, Shield, Package, UserCircle, MapPin, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchModal } from "@/components/SearchModal";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +21,35 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
   
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        
+        if (data?.full_name) {
+          setUserName(data.full_name);
+        } else if (user.user_metadata?.full_name) {
+          setUserName(user.user_metadata.full_name);
+        } else if (user.email) {
+          // Extract first part of email as fallback
+          setUserName(user.email.split('@')[0]);
+        }
+      } else {
+        setUserName(null);
+      }
+    };
+
+    fetchUserProfile();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -33,10 +60,10 @@ export const Navbar = () => {
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-border">
         <div className="container-rev">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-24">
             {/* Logo */}
             <Link to="/" className="flex items-center">
-              <img src={logoNavbar} alt="The Rev Vault" className="h-20 w-auto" />
+              <img src={logoNavbar} alt="The Rev Vault" className="h-24 w-auto" />
             </Link>
 
             {/* Desktop Navigation */}
@@ -98,6 +125,12 @@ export const Navbar = () => {
 
             {/* Right Side Actions */}
             <div className="hidden lg:flex items-center gap-4">
+              {user && userName && (
+                <span className="text-foreground text-sm font-medium">
+                  Hi, {userName}
+                </span>
+              )}
+              
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -114,10 +147,41 @@ export const Navbar = () => {
                       <User className="w-5 h-5" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuContent align="end" className="w-56">
                     <div className="px-2 py-1.5 text-sm text-muted-foreground">
                       {user.email}
                     </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="cursor-pointer">
+                        <UserCircle className="w-4 h-4 mr-2" />
+                        My Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/garage" className="cursor-pointer">
+                        <Car className="w-4 h-4 mr-2" />
+                        My Garage
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/orders" className="cursor-pointer">
+                        <Package className="w-4 h-4 mr-2" />
+                        Order History
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/addresses" className="cursor-pointer">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Saved Addresses
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/coupons" className="cursor-pointer">
+                        <Gift className="w-4 h-4 mr-2" />
+                        Gifts & Coupons
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     {isAdmin && (
                       <DropdownMenuItem asChild>

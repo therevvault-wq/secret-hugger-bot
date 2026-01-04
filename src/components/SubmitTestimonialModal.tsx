@@ -55,8 +55,8 @@ export const SubmitTestimonialModal = () => {
       
       if (error) throw error;
       
-      toast.success('Testimonial submitted!', {
-        description: 'It will appear on the site once approved.',
+      toast.success('Thank you for your time!', {
+        description: 'Testimonial submitted successfully. It will appear on the site once approved.',
       });
       
       // Reset form

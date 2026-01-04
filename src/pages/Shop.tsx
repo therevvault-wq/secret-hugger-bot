@@ -1,0 +1,200 @@
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Loader2, Package, ShoppingCart } from 'lucide-react';
+import { toast } from 'sonner';
+
+interface Product {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  compare_at_price: number | null;
+  image_url: string | null;
+  category: string | null;
+  is_active: boolean | null;
+}
+
+export default function Shop() {
+  const [searchParams] = useSearchParams();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const make = searchParams.get('make');
+  const model = searchParams.get('model');
+  const year = searchParams.get('year');
+  const fuelType = searchParams.get('fuelType');
+
+  useEffect(() => {
+    fetchProducts();
+  }, [searchParams]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch all active products grouped by category
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('is_active', true)
+        .order('category', { ascending: true })
+        .order('sort_order', { ascending: true });
+
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error: any) {
+      toast.error('Failed to fetch products', {
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
+  // Group products by category
+  const aestheticsProducts = products.filter(p => p.category?.toLowerCase() === 'aesthetics');
+  const performanceProducts = products.filter(p => p.category?.toLowerCase() === 'performance');
+  const otherProducts = products.filter(p => !p.category || (p.category.toLowerCase() !== 'aesthetics' && p.category.toLowerCase() !== 'performance'));
+
+  const renderProductCard = (product: Product) => (
+    <Card key={product.id} className="border-border hover:border-primary/50 transition-all overflow-hidden group">
+      {product.image_url && (
+        <div className="aspect-square overflow-hidden bg-secondary">
+          <img
+            src={product.image_url}
+            alt={product.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      )}
+      <CardHeader>
+        <CardTitle className="text-xl line-clamp-2">{product.title}</CardTitle>
+        {product.description && (
+          <CardDescription className="line-clamp-2">
+            {product.description}
+          </CardDescription>
+        )}
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl font-bold text-primary">
+            {formatPrice(product.price)}
+          </span>
+          {product.compare_at_price && product.compare_at_price > product.price && (
+            <span className="text-sm text-muted-foreground line-through">
+              {formatPrice(product.compare_at_price)}
+            </span>
+          )}
+        </div>
+        <Button className="w-full btn-primary">
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Add to Cart
+        </Button>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      
+      <div className="container-rev pt-32 pb-20">
+        <div className="mb-8">
+          <h1 className="font-display text-4xl md:text-5xl mb-4">
+            Products for Your Vehicle
+          </h1>
+          {(make || model || year || fuelType) && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {make && <Badge variant="secondary" className="text-sm">{make}</Badge>}
+              {model && <Badge variant="secondary" className="text-sm">{model}</Badge>}
+              {year && <Badge variant="secondary" className="text-sm">{year}</Badge>}
+              {fuelType && <Badge variant="secondary" className="text-sm">{fuelType}</Badge>}
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : products.length === 0 ? (
+          <Card className="border-border">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <Package className="w-16 h-16 text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No Products Added</h3>
+              <p className="text-muted-foreground text-center max-w-md">
+                We're currently working on adding products for your vehicle. Please check back soon or contact us for availability.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-16">
+            {/* Aesthetics Section */}
+            {aestheticsProducts.length > 0 && (
+              <section>
+                <div className="mb-8">
+                  <h2 className="font-display text-3xl md:text-4xl mb-2">
+                    <span className="text-primary">AESTHETICS</span>
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Enhance your vehicle's appearance with premium aesthetic upgrades
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {aestheticsProducts.map(renderProductCard)}
+                </div>
+              </section>
+            )}
+
+            {/* Performance Section */}
+            {performanceProducts.length > 0 && (
+              <section>
+                <div className="mb-8">
+                  <h2 className="font-display text-3xl md:text-4xl mb-2">
+                    <span className="text-primary">PERFORMANCE</span>
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Boost your vehicle's power and handling with performance parts
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {performanceProducts.map(renderProductCard)}
+                </div>
+              </section>
+            )}
+
+            {/* Other Products Section */}
+            {otherProducts.length > 0 && (
+              <section>
+                <div className="mb-8">
+                  <h2 className="font-display text-3xl md:text-4xl mb-2">
+                    OTHER PRODUCTS
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {otherProducts.map(renderProductCard)}
+                </div>
+              </section>
+            )}
+          </div>
+        )}
+      </div>
+
+      <Footer />
+    </div>
+  );
+}

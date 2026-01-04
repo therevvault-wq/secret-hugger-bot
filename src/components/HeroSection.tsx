@@ -4,7 +4,7 @@ import heroVideo from "@/assets/hero-video.mp4";
 
 export const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0">
         <video 
@@ -16,15 +16,15 @@ export const HeroSection = () => {
         >
           <source src={heroVideo} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
       </div>
 
       {/* Content */}
-      <div className="w-full relative z-10 pt-20 pl-8 sm:pl-12 lg:pl-20 xl:pl-32">
+      <div className="w-full relative z-10 pt-24 md:pt-20 px-4 sm:px-8 lg:pl-20 xl:pl-32">
         <div className="max-w-3xl">
           <h1 
-            className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-foreground leading-tight tracking-wide mb-8 animate-slide-up" 
+            className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-foreground leading-tight tracking-wide mb-6 md:mb-8 animate-slide-up" 
             style={{ animationDelay: "0.1s" }}
           >
             UNLEASH YOUR
@@ -35,7 +35,7 @@ export const HeroSection = () => {
           </h1>
 
           <p 
-            className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 animate-slide-up" 
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mb-6 md:mb-8 animate-slide-up" 
             style={{ animationDelay: "0.2s" }}
           >
             Premium aesthetic and performance upgrades for luxury and sports vehicles.
@@ -43,30 +43,30 @@ export const HeroSection = () => {
           </p>
 
           <div 
-            className="flex flex-wrap gap-4 animate-slide-up" 
+            className="flex flex-wrap gap-3 md:gap-4 animate-slide-up" 
             style={{ animationDelay: "0.3s" }}
           >
-            <Button size="lg" className="btn-primary text-base px-8">
-              Shop Now <ChevronRight className="w-5 h-5 ml-2" />
+            <Button size="lg" className="btn-primary text-sm sm:text-base px-6 sm:px-8">
+              Shop Now <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
             </Button>
           </div>
 
           {/* Stats */}
           <div 
             style={{ animationDelay: "0.4s" }} 
-            className="flex mt-16 animate-slide-up gap-12"
+            className="flex mt-10 md:mt-16 animate-slide-up gap-6 sm:gap-8 md:gap-12"
           >
             <div>
-              <p className="font-display text-4xl md:text-5xl text-primary">100+</p>
-              <p className="text-muted-foreground text-sm">Products</p>
+              <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary">100+</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">Products</p>
             </div>
             <div>
-              <p className="font-display text-4xl md:text-5xl text-foreground">10+</p>
-              <p className="text-muted-foreground text-sm">Brands</p>
+              <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground">10+</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">Brands</p>
             </div>
             <div>
-              <p className="font-display text-4xl md:text-5xl text-foreground">200+</p>
-              <p className="text-muted-foreground text-sm">Happy Customers</p>
+              <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground">200+</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">Happy Customers</p>
             </div>
           </div>
         </div>

@@ -89,6 +89,42 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          id: string
+          user_id: string
+          created_at: string
+          updated_at: string
+          status: string
+          total_amount: number
+          shipping_address: string | null
+          items: Json
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          created_at?: string
+          updated_at?: string
+          status?: string
+          total_amount: number
+          shipping_address?: string | null
+          items?: Json
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          created_at?: string
+          updated_at?: string
+          status?: string
+          total_amount?: number
+          shipping_address?: string | null
+          items?: Json
+          notes?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string | null
@@ -206,6 +242,42 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_vehicles: {
+        Row: {
+          id: string
+          user_id: string
+          make: string
+          model: string
+          year: string
+          fuel_type: string
+          nickname: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          make: string
+          model: string
+          year: string
+          fuel_type: string
+          nickname?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          make?: string
+          model?: string
+          year?: string
+          fuel_type?: string
+          nickname?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }

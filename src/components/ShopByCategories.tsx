@@ -33,16 +33,16 @@ export const ShopByCategories = () => {
   return (
     <section className="section-padding">
       <div className="container-rev">
-        <div className="text-center mb-12">
-          <span className="text-primary text-sm font-medium uppercase tracking-widest">
+        <div className="text-center mb-8 md:mb-12">
+          <span className="text-primary text-xs sm:text-sm font-medium uppercase tracking-widest">
             Browse
           </span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground mt-2">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mt-2">
             SHOP BY <span className="text-primary">CATEGORY</span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {categories.map((category) => (
             <Link
               key={category.name}
