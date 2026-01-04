@@ -5,10 +5,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, FileText, Gift, MessageSquare, LayoutDashboard } from 'lucide-react';
+import { Loader2, FileText, Gift, MessageSquare, LayoutDashboard, Package } from 'lucide-react';
 import BlogManager from '@/components/admin/BlogManager';
 import OffersManager from '@/components/admin/OffersManager';
 import TestimonialsManager from '@/components/admin/TestimonialsManager';
+import ProductsManager from '@/components/admin/ProductsManager';
 
 export default function Admin() {
   const [pendingReviews, setPendingReviews] = useState(0);
@@ -62,12 +63,16 @@ export default function Admin() {
               </h1>
             </div>
             <p className="text-muted-foreground">
-              Manage your blogs, offers, and customer reviews
+              Manage your products, blogs, offers, and customer reviews
             </p>
           </div>
 
-          <Tabs defaultValue="blogs" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
+          <Tabs defaultValue="products" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="products" className="flex items-center gap-2">
+                <Package className="w-4 h-4" />
+                <span className="hidden sm:inline">Products</span>
+              </TabsTrigger>
               <TabsTrigger value="blogs" className="flex items-center gap-2">
                 <FileText className="w-4 h-4" />
                 <span className="hidden sm:inline">Blogs</span>
@@ -86,6 +91,10 @@ export default function Admin() {
                 )}
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="products">
+              <ProductsManager />
+            </TabsContent>
 
             <TabsContent value="blogs">
               <BlogManager />
