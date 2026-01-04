@@ -19,76 +19,72 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { PageTransition, SectionReveal } from "@/components/PageTransition";
 
 const Index = () => {
-  const [showContent, setShowContent] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <>
-      <LoadingScreen onLoadingComplete={() => setShowContent(true)} minDuration={2500} />
+    <div className="min-h-screen bg-background">
+      <LoadingScreen onLoadingComplete={() => setIsLoading(false)} minDuration={1500} />
       
-      {showContent && (
-        <PageTransition>
-          <div className="min-h-screen bg-background">
-            <Navbar />
-            <main>
-              {/* 1. Hero Banner/Video */}
-              <HeroSection />
-              
-              {/* 2. Search Filter */}
-              <SectionReveal>
-                <VehicleSelector />
-              </SectionReveal>
-              
-              {/* 3. Brands Scrolling */}
-              <SectionReveal delay={0.1}>
-                <BrandCarousel />
-              </SectionReveal>
-              
-              {/* 4. Shop by Categories */}
-              <SectionReveal delay={0.1}>
-                <ShopByCategories />
-              </SectionReveal>
-              
-              {/* 5. Blogs - "Fuel Your Passion" */}
-              <SectionReveal>
-                <BlogSection />
-              </SectionReveal>
-              
-              {/* 6. Why Us (no heading) */}
-              <SectionReveal>
-                <WhyChooseUs />
-              </SectionReveal>
-              
-              {/* 7. Exclusive Offers/Sales */}
-              <SectionReveal>
-                <OffersSection />
-              </SectionReveal>
-              
-              {/* 8. How can we assist you today (Contact Us) */}
-              <SectionReveal>
-                <ContactSection />
-              </SectionReveal>
-              
-              {/* 9. Testimonials */}
-              <SectionReveal>
-                <Testimonials />
-              </SectionReveal>
-              
-              {/* 10. Instagram Feed */}
-              <SectionReveal>
-                <InstagramFeed />
-              </SectionReveal>
-            </main>
-            <Footer />
-            <RotatingLogo />
-            <ScrollToTop />
-            
-            {/* Popups */}
-            <LoginPromptPopup />
-            <GaragePromptPopup />
-          </div>
-        </PageTransition>
-      )}
-    </>
+      <PageTransition className={isLoading ? 'pointer-events-none' : ''}>
+        <Navbar />
+        <main>
+          {/* 1. Hero Banner/Video */}
+          <HeroSection />
+          
+          {/* 2. Search Filter */}
+          <SectionReveal>
+            <VehicleSelector />
+          </SectionReveal>
+          
+          {/* 3. Brands Scrolling */}
+          <SectionReveal delay={0.1}>
+            <BrandCarousel />
+          </SectionReveal>
+          
+          {/* 4. Shop by Categories */}
+          <SectionReveal delay={0.1}>
+            <ShopByCategories />
+          </SectionReveal>
+          
+          {/* 5. Blogs - "Fuel Your Passion" */}
+          <SectionReveal>
+            <BlogSection />
+          </SectionReveal>
+          
+          {/* 6. Why Us (no heading) */}
+          <SectionReveal>
+            <WhyChooseUs />
+          </SectionReveal>
+          
+          {/* 7. Exclusive Offers/Sales */}
+          <SectionReveal>
+            <OffersSection />
+          </SectionReveal>
+          
+          {/* 8. How can we assist you today (Contact Us) */}
+          <SectionReveal>
+            <ContactSection />
+          </SectionReveal>
+          
+          {/* 9. Testimonials */}
+          <SectionReveal>
+            <Testimonials />
+          </SectionReveal>
+          
+          {/* 10. Instagram Feed */}
+          <SectionReveal>
+            <InstagramFeed />
+          </SectionReveal>
+        </main>
+        <Footer />
+        <RotatingLogo />
+        <ScrollToTop />
+        
+        {/* Popups */}
+        <LoginPromptPopup />
+        <GaragePromptPopup />
+      </PageTransition>
+    </div>
   );
 };
 
