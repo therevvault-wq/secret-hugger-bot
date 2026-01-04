@@ -99,19 +99,40 @@ export default function Auth() {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-    
+
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/`,
         },
       });
-      
+
       if (error) {
         toast.error(error.message);
+        return;
       }
-    } catch (error: any) {
+
+      if (!data?.url) {
+        toast.error('Could not start Google sign-in.');
+        return;
+      }
+
+      // In the Lovable preview (iframe), cross-site redirects can be blocked.
+      // Opening in a new tab is the most reliable flow.
+      let inIframe = false;
+      try {
+        inIframe = window.self !== window.top;
+      } catch {
+        inIframe = true;
+      }
+
+      if (inIframe) {
+        window.open(data.url, '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.href = data.url;
+      }
+    } catch {
       toast.error('Failed to sign in with Google');
     } finally {
       setLoading(false);
