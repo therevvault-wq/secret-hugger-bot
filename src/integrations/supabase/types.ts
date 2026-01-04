@@ -89,6 +89,42 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          notes: string | null
+          shipping_address: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items?: Json
+          notes?: string | null
+          shipping_address?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          notes?: string | null
+          shipping_address?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string | null
@@ -206,6 +242,48 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_vehicles: {
+        Row: {
+          created_at: string
+          fuel_type: string
+          id: string
+          is_primary: boolean | null
+          make: string
+          model: string
+          nickname: string | null
+          updated_at: string
+          user_id: string
+          variant: string | null
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          fuel_type: string
+          id?: string
+          is_primary?: boolean | null
+          make: string
+          model: string
+          nickname?: string | null
+          updated_at?: string
+          user_id: string
+          variant?: string | null
+          year: number
+        }
+        Update: {
+          created_at?: string
+          fuel_type?: string
+          id?: string
+          is_primary?: boolean | null
+          make?: string
+          model?: string
+          nickname?: string | null
+          updated_at?: string
+          user_id?: string
+          variant?: string | null
+          year?: number
         }
         Relationships: []
       }
