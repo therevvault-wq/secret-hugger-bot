@@ -98,6 +98,11 @@ export const Footer = () => {
                   Shipping Policy
                 </Link>
               </li>
+              <li>
+                <Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Admin Login
+                </Link>
+              </li>
             </ul>
           </div>
 
