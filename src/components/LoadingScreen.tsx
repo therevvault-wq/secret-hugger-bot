@@ -44,72 +44,49 @@ export const LoadingScreen = ({ onLoadingComplete, minDuration = 2000 }: Loading
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background"
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center backdrop-blur-md bg-background/80"
         >
-          {/* Radial gradient background */}
-          <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-background to-background" />
-          
           {/* Content container */}
-          <div className="relative flex flex-col items-center gap-8">
+          <div className="relative flex flex-col items-center gap-6">
             {/* Spinning turbo logo */}
             <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
               className="relative"
             >
-              {/* Glow effect */}
-              <div className="absolute inset-0 blur-2xl bg-primary/30 rounded-full animate-pulse" />
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 blur-xl bg-primary/20 rounded-full" />
               
               {/* Turbo container */}
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 2, ease: 'linear', repeat: Infinity }}
-                className="relative w-28 h-28 md:w-36 md:h-36"
+                transition={{ duration: 1.5, ease: 'linear', repeat: Infinity }}
+                className="relative w-20 h-20 md:w-24 md:h-24"
               >
                 <img
                   src={turboLoader}
                   alt="Loading..."
-                  className="w-full h-full object-contain drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)]"
+                  className="w-full h-full object-contain drop-shadow-[0_0_20px_hsl(var(--primary)/0.4)]"
                 />
               </motion.div>
             </motion.div>
 
-            {/* Brand text */}
+            {/* Progress bar - subtle */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-center"
-            >
-              <h1 className="font-display text-3xl md:text-4xl text-foreground tracking-wider">
-                THE<span className="text-primary">REV</span>VAULT
-              </h1>
-              <p className="text-muted-foreground text-sm mt-2">Unleash Your Machine</p>
-            </motion.div>
-
-            {/* Progress bar */}
-            <motion.div
-              initial={{ opacity: 0, scaleX: 0 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-              className="w-48 md:w-64 h-1 bg-border rounded-full overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
+              className="w-32 md:w-40 h-0.5 bg-border/50 rounded-full overflow-hidden"
             >
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
-                className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full"
-                style={{
-                  boxShadow: '0 0 20px hsl(var(--primary) / 0.5)',
-                }}
+                className="h-full bg-primary/80 rounded-full"
               />
             </motion.div>
           </div>
-
-          {/* Corner decorations */}
-          <div className="absolute top-0 left-0 w-32 h-32 border-l-2 border-t-2 border-primary/20" />
-          <div className="absolute bottom-0 right-0 w-32 h-32 border-r-2 border-b-2 border-primary/20" />
         </motion.div>
       )}
     </AnimatePresence>
