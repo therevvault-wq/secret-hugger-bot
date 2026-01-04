@@ -11,6 +11,7 @@ import { InstagramFeed } from "@/components/InstagramFeed";
 import { Testimonials } from "@/components/Testimonials";
 import { Footer } from "@/components/Footer";
 import { RotatingLogo } from "@/components/RotatingLogo";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 const Index = () => {
   return (
@@ -49,6 +50,7 @@ const Index = () => {
       </main>
       <Footer />
       <RotatingLogo />
+      <ScrollToTop />
     </div>
   );
 };
