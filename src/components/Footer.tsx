@@ -98,11 +98,6 @@ export const Footer = () => {
                   Shipping Policy
                 </Link>
               </li>
-              <li>
-                <Link to="/sell-on-therevvault" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Sell on THEREVVAULT
-                </Link>
-              </li>
             </ul>
           </div>
 
