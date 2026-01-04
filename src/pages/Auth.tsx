@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { Loader2, Phone, Mail } from 'lucide-react';
+import { Loader2, MessageCircle } from 'lucide-react';
 import { z } from 'zod';
 
 const phoneSchema = z.string().min(10, 'Please enter a valid phone number');
@@ -49,13 +49,16 @@ export default function Auth() {
       
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
+        options: {
+          channel: 'whatsapp',
+        },
       });
       
       if (error) {
         toast.error(error.message);
       } else {
         setOtpSent(true);
-        toast.success('OTP sent to your phone!');
+        toast.success('OTP sent to your WhatsApp!');
       }
     } catch (error: any) {
       toast.error('Failed to send OTP');
@@ -131,7 +134,6 @@ export default function Auth() {
               </p>
             </div>
 
-            {/* Auth Method Tabs */}
             <div className="flex gap-2 mb-6">
               <Button
                 type="button"
@@ -143,8 +145,8 @@ export default function Auth() {
                   setOtp('');
                 }}
               >
-                <Phone className="w-4 h-4 mr-2" />
-                Phone OTP
+                <MessageCircle className="w-4 h-4 mr-2" />
+                WhatsApp OTP
               </Button>
               <Button
                 type="button"
