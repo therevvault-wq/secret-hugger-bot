@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from "framer-motion";
-import turboLoader from "@/assets/turbo-loader.png";
+import { motion } from "framer-motion";
+import { MessageCircle } from "lucide-react";
 
 export const RotatingLogo = () => {
   const whatsappNumber = "919717820775";
@@ -26,23 +26,17 @@ export const RotatingLogo = () => {
           <span className="text-sm font-medium whitespace-nowrap">Need any assistance?</span>
         </motion.div>
         
-        {/* Turbo Logo */}
+        {/* WhatsApp Icon */}
         <div className="relative">
           {/* Glow ring */}
-          <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse-glow" />
+          <div className="absolute inset-0 rounded-full bg-[#25D366]/20 animate-pulse-glow" />
           
           <motion.div 
-            className="relative w-14 h-14 rounded-full bg-background border-2 border-primary/40 flex items-center justify-center shadow-lg overflow-hidden group-hover:border-primary transition-colors duration-300"
+            className="relative w-14 h-14 rounded-full bg-[#25D366] border-2 border-[#25D366]/40 flex items-center justify-center shadow-lg group-hover:bg-[#20BA5A] group-hover:border-[#20BA5A] transition-colors duration-300"
             whileHover={{ scale: 1.1 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
-            <motion.img
-              src={turboLoader}
-              alt="Contact us on WhatsApp"
-              className="w-12 h-12 object-contain"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, ease: "linear", repeat: Infinity }}
-            />
+            <MessageCircle className="w-7 h-7 text-white" strokeWidth={2} />
           </motion.div>
         </div>
       </div>
