@@ -26,11 +26,8 @@ const Index = () => {
   useEffect(() => {
     // Handle OAuth callback
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
+      if (event === 'SIGNED_IN' && session) {
         toast.success('Successfully signed in!');
-      }
-      if (event === 'SIGNED_OUT') {
-        toast.info('Signed out');
       }
     });
 
