@@ -36,36 +36,50 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+    let mounted = true;
+    
+    // Check for existing session first
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (mounted) {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Check admin role with setTimeout to avoid deadlock
         if (session?.user) {
-          setTimeout(() => {
-            checkAdminRole(session.user.id);
-          }, 0);
-        } else {
-          setIsAdmin(false);
+          checkAdminRole(session.user.id);
+        }
+      }
+    });
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (mounted) {
+          console.log('Auth state change:', event, session?.user?.email);
+          setSession(session);
+          setUser(session?.user ?? null);
+          
+          // Only set loading to false if we haven't already
+          if (event === 'INITIAL_SESSION') {
+            setLoading(false);
+          }
+          
+          // Check admin role with setTimeout to avoid deadlock
+          if (session?.user) {
+            setTimeout(() => {
+              checkAdminRole(session.user.id);
+            }, 0);
+          } else {
+            setIsAdmin(false);
+          }
         }
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-      
-      if (session?.user) {
-        checkAdminRole(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
