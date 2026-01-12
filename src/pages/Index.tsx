@@ -24,8 +24,27 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Handle OAuth callback
+    // Handle OAuth callback hash
+    const handleOAuthCallback = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      
+      if (accessToken) {
+        console.log('OAuth callback detected, setting session...');
+        await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: hashParams.get('refresh_token') || '',
+        });
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    };
+    
+    handleOAuthCallback();
+
+    // Handle auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Index auth state:', event, session?.user?.email);
       if (event === 'SIGNED_IN' && session) {
         toast.success('Successfully signed in!');
       }
