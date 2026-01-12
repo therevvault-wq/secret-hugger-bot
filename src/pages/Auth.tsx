@@ -200,10 +200,10 @@ export default function Auth() {
           <div className="bg-card border border-border rounded-2xl p-8">
             <div className="text-center mb-8">
               <h1 className="font-display text-3xl text-foreground">
-                ADMIN LOGIN
+                WELCOME BACK
               </h1>
               <p className="text-muted-foreground mt-2">
-                Sign in to access the admin panel
+                Sign in to your account
               </p>
             </div>
 
