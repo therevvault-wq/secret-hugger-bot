@@ -14,12 +14,16 @@ import { z } from 'zod';
 const phoneSchema = z.string().min(10, 'Please enter a valid phone number');
 
 export default function Auth() {
-  const [authMethod, setAuthMethod] = useState<'phone' | 'google'>('phone');
+  const [authMethod, setAuthMethod] = useState<'email' | 'phone' | 'google'>('email');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ phone?: string }>({});
+  const [errors, setErrors] = useState<{ phone?: string; email?: string; password?: string }>({});
   
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -29,6 +33,54 @@ export default function Auth() {
       navigate('/');
     }
   }, [user, navigate]);
+
+  const handleEmailAuth = async () => {
+    setLoading(true);
+    setErrors({});
+    
+    try {
+      if (isSignUp) {
+        if (!fullName.trim()) {
+          setErrors({ email: 'Please enter your full name' });
+          setLoading(false);
+          return;
+        }
+        
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            },
+          },
+        });
+        
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Account created! You can now sign in.');
+          setIsSignUp(false);
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Welcome back!');
+          navigate('/');
+        }
+      }
+    } catch (error: any) {
+      toast.error('Authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSendOtp = async () => {
     try {
@@ -158,6 +210,18 @@ export default function Auth() {
             <div className="flex gap-2 mb-6">
               <Button
                 type="button"
+                variant={authMethod === 'email' ? 'default' : 'outline'}
+                className="flex-1"
+                onClick={() => {
+                  setAuthMethod('email');
+                  setOtpSent(false);
+                  setOtp('');
+                }}
+              >
+                Email
+              </Button>
+              <Button
+                type="button"
                 variant={authMethod === 'phone' ? 'default' : 'outline'}
                 className="flex-1"
                 onClick={() => {
@@ -167,7 +231,7 @@ export default function Auth() {
                 }}
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                WhatsApp OTP
+                WhatsApp
               </Button>
               <Button
                 type="button"
@@ -197,7 +261,78 @@ export default function Auth() {
               </Button>
             </div>
 
-            {authMethod === 'phone' ? (
+            {authMethod === 'email' ? (
+              <div className="space-y-4">
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="bg-secondary/50"
+                    />
+                  </div>
+                )}
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="therevvault@gmail.com"
+                    className="bg-secondary/50"
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="bg-secondary/50"
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-destructive">{errors.password}</p>
+                  )}
+                </div>
+                
+                <Button 
+                  type="button"
+                  onClick={handleEmailAuth}
+                  className="w-full btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {isSignUp ? 'Creating account...' : 'Signing in...'}
+                    </>
+                  ) : (
+                    isSignUp ? 'Sign Up' : 'Sign In'
+                  )}
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                >
+                  {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+                </Button>
+              </div>
+            ) : authMethod === 'phone' ? (
               <div className="space-y-4">
                 {!otpSent ? (
                   <>

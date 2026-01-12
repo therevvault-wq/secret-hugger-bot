@@ -1,5 +1,27 @@
 project_id = "yiftjnzdeywcrodtsjsb"
 
-# Configure Google OAuth in Supabase Dashboard:
-# Go to Authentication > Providers > Google
-# Add your client_id and secret there instead of in this file
+[auth]
+enabled = true
+# The base URL of your website. Used as an allow-list for redirects and for constructing URLs used in emails.
+site_url = "http://localhost:8081"
+# A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
+additional_redirect_urls = ["http://localhost:8081"]
+# How long tokens are valid for, in seconds. Defaults to 3600 (1 hour).
+jwt_expiry = 3600
+# If disabled, the refresh token will never expire.
+enable_refresh_token_rotation = true
+# Allows refresh tokens to be reused after expiry, up to the specified interval in seconds.
+# Requires enable_refresh_token_rotation = true.
+refresh_token_reuse_interval = 10
+
+[auth.email]
+# Allow/disallow new user signups via email to your project.
+enable_signup = true
+# If enabled, a user will be required to confirm any email change on both the old, and new email addresses.
+double_confirm_changes = true
+# If enabled, users need to confirm their email address before signing in.
+enable_confirmations = false
+
+# Configure Google OAuth (configure in Supabase Dashboard for production)
+# Go to Authentication > Providers > Google in your Supabase dashboard
+# Add your OAuth credentials there instead of in this file

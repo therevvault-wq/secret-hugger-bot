@@ -17,6 +17,12 @@ CREATE INDEX IF NOT EXISTS idx_user_vehicles_user_id ON user_vehicles(user_id);
 -- Enable Row Level Security
 ALTER TABLE user_vehicles ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view their own vehicles" ON user_vehicles;
+DROP POLICY IF EXISTS "Users can insert their own vehicles" ON user_vehicles;
+DROP POLICY IF EXISTS "Users can update their own vehicles" ON user_vehicles;
+DROP POLICY IF EXISTS "Users can delete their own vehicles" ON user_vehicles;
+
 -- Policy: Users can view their own vehicles
 CREATE POLICY "Users can view their own vehicles"
   ON user_vehicles
@@ -43,6 +49,9 @@ CREATE POLICY "Users can delete their own vehicles"
   USING (auth.uid() = user_id);
 
 -- Add updated_at trigger
+DROP TRIGGER IF EXISTS user_vehicles_updated_at ON user_vehicles;
+DROP FUNCTION IF EXISTS update_user_vehicles_updated_at();
+
 CREATE OR REPLACE FUNCTION update_user_vehicles_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN

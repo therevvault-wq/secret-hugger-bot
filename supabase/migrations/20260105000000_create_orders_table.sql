@@ -20,6 +20,12 @@ CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 -- Enable Row Level Security
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view their own orders" ON orders;
+DROP POLICY IF EXISTS "Users can insert their own orders" ON orders;
+DROP POLICY IF EXISTS "Admins can view all orders" ON orders;
+DROP POLICY IF EXISTS "Admins can update all orders" ON orders;
+
 -- Policy: Users can view their own orders
 CREATE POLICY "Users can view their own orders"
   ON orders
@@ -57,6 +63,9 @@ CREATE POLICY "Admins can update all orders"
   );
 
 -- Add updated_at trigger
+DROP TRIGGER IF EXISTS orders_updated_at ON orders;
+DROP FUNCTION IF EXISTS update_orders_updated_at();
+
 CREATE OR REPLACE FUNCTION update_orders_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
