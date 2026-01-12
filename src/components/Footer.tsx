@@ -50,7 +50,7 @@ export const Footer = () => {
                 <Instagram className="w-5 h-5" />
               </a>
               <a 
-                href="https://wa.me/919717820775" 
+                href="https://wa.me/919717820775?text=Hi, I'm reaching out from your website and would like to connect for more details" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary transition-colors"
