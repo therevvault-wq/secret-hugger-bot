@@ -43,8 +43,8 @@ export const HeroSection = () => {
         </video>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent md:from-background md:via-background/90" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
 
       {/* Content */}
       <div className="w-full relative z-10 pt-24 md:pt-20 px-4 sm:px-8 lg:pl-20 xl:pl-32">

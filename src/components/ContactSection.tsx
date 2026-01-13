@@ -37,7 +37,7 @@ export const ContactSection = () => {
             <p className="text-muted-foreground text-lg">
               Have questions about a product, need help choosing the right parts, or want to discuss your build? Our team of experts is here to help.
             </p>
-            
+
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -45,27 +45,27 @@ export const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-display text-foreground mb-1">Phone</h4>
-                  <p className="text-muted-foreground">+91 98765 43210</p>
+                  <p className="text-muted-foreground">+91 82872 20775</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <h4 className="font-display text-foreground mb-1">Email</h4>
-                  <p className="text-muted-foreground">support@therevvault.com</p>
+                  <p className="text-muted-foreground">therevvault@gmail.com</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <h4 className="font-display text-foreground mb-1">Location</h4>
-                  <p className="text-muted-foreground">Mumbai, Maharashtra, India</p>
+                  <p className="text-muted-foreground">Delhi, India</p>
                 </div>
               </div>
             </div>

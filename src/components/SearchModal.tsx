@@ -7,42 +7,56 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, X, ArrowRight } from "lucide-react";
+import { Search, X, ArrowRight, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const DEMO_PRODUCTS = [
-  { id: "1", name: "Carbon Fiber Spoiler", brand: "REVVAULT", price: 899, category: "Exterior" },
-  { id: "2", name: "Performance Air Intake", brand: "K&N", price: 349, category: "Engine" },
-  { id: "3", name: "LED Headlight Kit", brand: "OSRAM", price: 599, category: "Lighting" },
-  { id: "4", name: "Coilover Suspension Kit", brand: "KW", price: 2499, category: "Suspension" },
-  { id: "5", name: "Forged Alloy Wheels", brand: "BBS", price: 3200, category: "Wheels" },
-  { id: "6", name: "Sport Exhaust System", brand: "AKRAPOVIC", price: 4500, category: "Exhaust" },
-];
+interface Product {
+  id: string;
+  title: string;
+  category: string | null;
+  price: number;
+}
 
-const POPULAR_SEARCHES = ["Spoiler", "Exhaust", "Wheels", "Suspension", "LED Lights"];
+const POPULAR_SEARCHES = ["Exhaust", "Wheels", "Suspension", "Body Kit", "Intake"];
 
 export const SearchModal = ({ open, onOpenChange }: SearchModalProps) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<typeof DEMO_PRODUCTS>([]);
+  const [results, setResults] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (query.trim() === "") {
-      setResults([]);
-      return;
-    }
+    const searchProducts = async () => {
+      if (query.trim() === "") {
+        setResults([]);
+        return;
+      }
 
-    const filtered = DEMO_PRODUCTS.filter(
-      (product) =>
-        product.name.toLowerCase().includes(query.toLowerCase()) ||
-        product.brand.toLowerCase().includes(query.toLowerCase()) ||
-        product.category.toLowerCase().includes(query.toLowerCase())
-    );
-    setResults(filtered);
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('id, title, category, price')
+          .ilike('title', `%${query}%`)
+          .limit(6);
+
+        if (error) throw error;
+        setResults(data || []);
+      } catch (error) {
+        console.error('Search error:', error);
+        setResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const timeoutId = setTimeout(searchProducts, 300);
+    return () => clearTimeout(timeoutId);
   }, [query]);
 
   const handleProductClick = (productId: string) => {
@@ -58,6 +72,14 @@ export const SearchModal = ({ open, onOpenChange }: SearchModalProps) => {
     }
   };
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl p-0 gap-0 bg-card border-border">
@@ -68,7 +90,7 @@ export const SearchModal = ({ open, onOpenChange }: SearchModalProps) => {
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for parts, brands, categories..."
+              placeholder="Search for parts..."
               className="pl-10 pr-10 h-12 text-lg bg-transparent border-none focus-visible:ring-0"
               autoFocus
             />
@@ -100,6 +122,10 @@ export const SearchModal = ({ open, onOpenChange }: SearchModalProps) => {
                 ))}
               </div>
             </div>
+          ) : isLoading ? (
+            <div className="flex justify-center p-8">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
           ) : results.length > 0 ? (
             <div className="p-2">
               {results.map((product) => (
@@ -109,13 +135,15 @@ export const SearchModal = ({ open, onOpenChange }: SearchModalProps) => {
                   className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors text-left"
                 >
                   <div>
-                    <p className="text-foreground font-medium">{product.name}</p>
+                    <p className="text-foreground font-medium">{product.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      {product.brand} • {product.category}
+                      {product.category || 'Product'}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-foreground font-semibold">${product.price}</span>
+                    <span className="text-foreground font-semibold">
+                      {formatPrice(product.price)}
+                    </span>
                     <ArrowRight className="w-4 h-4 text-muted-foreground" />
                   </div>
                 </button>
@@ -138,3 +166,4 @@ export const SearchModal = ({ open, onOpenChange }: SearchModalProps) => {
     </Dialog>
   );
 };
+
