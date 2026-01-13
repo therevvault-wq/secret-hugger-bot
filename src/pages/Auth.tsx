@@ -24,7 +24,7 @@ export default function Auth() {
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ phone?: string; email?: string; password?: string }>({});
-  
+
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ export default function Auth() {
   const handleEmailAuth = async () => {
     setLoading(true);
     setErrors({});
-    
+
     try {
       if (isSignUp) {
         if (!fullName.trim()) {
@@ -45,7 +45,7 @@ export default function Auth() {
           setLoading(false);
           return;
         }
-        
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -55,7 +55,7 @@ export default function Auth() {
             },
           },
         });
-        
+
         if (error) {
           toast.error(error.message);
         } else {
@@ -67,7 +67,7 @@ export default function Auth() {
           email,
           password,
         });
-        
+
         if (error) {
           toast.error(error.message);
         } else {
@@ -94,18 +94,18 @@ export default function Auth() {
     }
 
     setLoading(true);
-    
+
     try {
       // Format phone number with country code if not present
       const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
-      
+
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
         options: {
           channel: 'whatsapp',
         },
       });
-      
+
       if (error) {
         toast.error(error.message);
       } else {
@@ -126,16 +126,16 @@ export default function Auth() {
     }
 
     setLoading(true);
-    
+
     try {
       const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
-      
+
       const { error } = await supabase.auth.verifyOtp({
         phone: formattedPhone,
         token: otp,
         type: 'sms',
       });
-      
+
       if (error) {
         toast.error(error.message);
       } else {
@@ -157,6 +157,10 @@ export default function Auth() {
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
 
@@ -194,7 +198,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      
+
       <main className="flex-1 flex items-center justify-center py-20 px-4">
         <div className="w-full max-w-md">
           <div className="bg-card border border-border rounded-2xl p-8">
@@ -276,7 +280,7 @@ export default function Auth() {
                     />
                   </div>
                 )}
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -291,7 +295,7 @@ export default function Auth() {
                     <p className="text-sm text-destructive">{errors.email}</p>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
@@ -306,8 +310,8 @@ export default function Auth() {
                     <p className="text-sm text-destructive">{errors.password}</p>
                   )}
                 </div>
-                
-                <Button 
+
+                <Button
                   type="button"
                   onClick={handleEmailAuth}
                   className="w-full btn-primary"
@@ -322,7 +326,7 @@ export default function Auth() {
                     isSignUp ? 'Sign Up' : 'Sign In'
                   )}
                 </Button>
-                
+
                 <Button
                   type="button"
                   variant="ghost"
@@ -356,8 +360,8 @@ export default function Auth() {
                         <p className="text-sm text-destructive">{errors.phone}</p>
                       )}
                     </div>
-                    
-                    <Button 
+
+                    <Button
                       type="button"
                       onClick={handleSendOtp}
                       className="w-full btn-primary"
@@ -390,8 +394,8 @@ export default function Auth() {
                         OTP sent to +91{phone}
                       </p>
                     </div>
-                    
-                    <Button 
+
+                    <Button
                       type="button"
                       onClick={handleVerifyOtp}
                       className="w-full btn-primary"
@@ -423,7 +427,7 @@ export default function Auth() {
               </div>
             ) : (
               <div className="space-y-4">
-                <Button 
+                <Button
                   type="button"
                   onClick={handleGoogleLogin}
                   className="w-full"
@@ -468,7 +472,7 @@ export default function Auth() {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

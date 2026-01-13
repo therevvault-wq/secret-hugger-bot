@@ -13,27 +13,43 @@ export const HeroSection = () => {
       {!videoLoaded && (
         <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-background animate-pulse" />
       )}
-      
-      {/* Background Video */}
-      <div className="absolute inset-0">
-        <video 
-          autoPlay 
-          muted 
-          loop 
+
+      {/* Background Video - Desktop */}
+      <div className="absolute inset-0 hidden md:block">
+        <video
+          autoPlay
+          muted
+          loop
           playsInline
           onLoadedData={() => setVideoLoaded(true)}
           className={`w-full h-full object-cover transition-opacity duration-1000 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
         >
           <source src={heroVideo} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
       </div>
+
+      {/* Background Video - Mobile */}
+      <div className="absolute inset-0 block md:hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          onLoadedData={() => setVideoLoaded(true)}
+          className={`w-full h-full object-cover transition-opacity duration-1000 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+        >
+          {/* TODO: Replace with mobile-specific vertical video if available */}
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+      </div>
+
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
 
       {/* Content */}
       <div className="w-full relative z-10 pt-24 md:pt-20 px-4 sm:px-8 lg:pl-20 xl:pl-32">
         <div className="max-w-3xl">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -46,7 +62,7 @@ export const HeroSection = () => {
             TRUE POTENTIAL
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -56,20 +72,20 @@ export const HeroSection = () => {
             Transform your ride with world-class imported parts.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-wrap gap-3 md:gap-4"
           >
             <Button size="lg" className="btn-primary text-sm sm:text-base px-6 sm:px-8 group">
-              Shop Now 
+              Shop Now
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
           </motion.div>
 
           {/* Stats */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}

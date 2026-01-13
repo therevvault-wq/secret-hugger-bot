@@ -19,64 +19,93 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
 
   const checkAdminRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .maybeSingle();
-    
-    if (!error && data) {
-      setIsAdmin(true);
-    } else {
+    try {
+      setIsAdminLoading(true);
+      console.log('Checking admin role for user:', userId);
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error checking admin role:', error);
+        setIsAdmin(false);
+        return;
+      }
+
+      if (data) {
+        console.log('User is admin');
+        setIsAdmin(true);
+      } else {
+        console.log('User is not admin');
+        setIsAdmin(false);
+      }
+    } catch (e) {
+      console.error('Exception in checkAdminRole:', e);
       setIsAdmin(false);
+    } finally {
+      setIsAdminLoading(false);
     }
   };
 
   useEffect(() => {
     let mounted = true;
-    
-    // Check for existing session first
-    supabase.auth.getSession().then(({ data: { session } }) => {
+
+    const initializeAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+
       if (mounted) {
+        console.log('Initial session check:', session ? 'Session found' : 'No session');
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
-        
+
         if (session?.user) {
-          checkAdminRole(session.user.id);
+          await checkAdminRole(session.user.id);
         }
+
+        setLoading(false);
       }
-    });
+    };
+
+    initializeAuth();
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         if (mounted) {
-          console.log('Auth state change:', event, session?.user?.email);
+          console.log('Auth state change event:', event);
+          console.log('Session user email:', session?.user?.email);
+
           setSession(session);
           setUser(session?.user ?? null);
-          
+
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            if (session?.user) {
+              await checkAdminRole(session.user.id);
+            }
+          }
+
+          if (event === 'SIGNED_OUT') {
+            setIsAdmin(false);
+            setUser(null);
+            setSession(null);
+          }
+
           // Only set loading to false if we haven't already
           if (event === 'INITIAL_SESSION') {
             setLoading(false);
-          }
-          
-          // Check admin role with setTimeout to avoid deadlock
-          if (session?.user) {
-            setTimeout(() => {
-              checkAdminRole(session.user.id);
-            }, 0);
-          } else {
-            setIsAdmin(false);
           }
         }
       }
     );
 
     return () => {
+      console.log('Auth provider unmounting');
       mounted = false;
       subscription.unsubscribe();
     };
@@ -84,7 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -95,7 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     });
-    
+
     return { error };
   };
 
@@ -104,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email,
       password,
     });
-    
+
     return { error };
   };
 
@@ -116,7 +145,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading: loading || isAdminLoading, isAdmin, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

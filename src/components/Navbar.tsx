@@ -23,7 +23,7 @@ export const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
-  
+
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ export const Navbar = () => {
           .select('full_name')
           .eq('id', user.id)
           .single();
-        
+
         if (data?.full_name) {
           setUserName(data.full_name);
         } else if (user.user_metadata?.full_name) {
@@ -61,28 +61,23 @@ export const Navbar = () => {
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-border">
         <div className="container-rev">
-          <div className="flex items-center justify-between h-24">
-            {/* Logo */}
-            <Link to="/" className="flex items-center">
-              <img src={logoNavbar} alt="The Rev Vault" className="h-24 w-auto" />
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-8">
-              <Link to="/" className="nav-link font-medium">Home</Link>
+          <div className="flex items-center justify-between h-28">
+            {/* Left - Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-6">
+              <Link to="/" className="nav-link font-medium text-base">Home</Link>
 
               {/* Aesthetics Dropdown */}
-              <div 
-                className="relative" 
-                onMouseEnter={() => setActiveDropdown("aesthetics")} 
+              <div
+                className="relative"
+                onMouseEnter={() => setActiveDropdown("aesthetics")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="nav-link font-medium flex items-center gap-1 py-4">
-                  Aesthetics <ChevronDown className="w-4 h-4" />
+                <button className="nav-link font-medium text-base flex items-center gap-1 py-4">
+                  Aesthetics <ChevronDown className="w-5 h-5" />
                 </button>
                 {activeDropdown === "aesthetics" && (
                   <div className="absolute top-full left-0 pt-2 z-50">
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -90,7 +85,7 @@ export const Navbar = () => {
                       className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4"
                     >
                       {aestheticsItems.map((item, i) => (
-                        <motion.span 
+                        <motion.span
                           key={item}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -106,17 +101,17 @@ export const Navbar = () => {
               </div>
 
               {/* Performance Dropdown */}
-              <div 
-                className="relative" 
-                onMouseEnter={() => setActiveDropdown("performance")} 
+              <div
+                className="relative"
+                onMouseEnter={() => setActiveDropdown("performance")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="nav-link font-medium flex items-center gap-1 py-4">
-                  Performance <ChevronDown className="w-4 h-4" />
+                <button className="nav-link font-medium text-base flex items-center gap-1 py-4">
+                  Performance <ChevronDown className="w-5 h-5" />
                 </button>
                 {activeDropdown === "performance" && (
                   <div className="absolute top-full left-0 pt-2 z-50">
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -124,7 +119,7 @@ export const Navbar = () => {
                       className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4"
                     >
                       {performanceItems.map((item, i) => (
-                        <motion.span 
+                        <motion.span
                           key={item}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -139,26 +134,32 @@ export const Navbar = () => {
                 )}
               </div>
 
-              <Link to="/blog" className="nav-link font-medium">Blog</Link>
+              <Link to="/shop" className="nav-link font-medium text-base">Shop All</Link>
+              <Link to="/blog" className="nav-link font-medium text-base">Blog</Link>
             </div>
 
+            {/* Center - Logo */}
+            <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center">
+              <img src={logoNavbar} alt="The Rev Vault" className="h-28 w-auto" />
+            </Link>
+
             {/* Right Side Actions */}
-            <div className="hidden lg:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4 ml-auto">
               {user && userName && (
                 <span className="text-foreground text-sm font-medium">
                   Hi, {userName}
                 </span>
               )}
-              
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-muted-foreground hover:text-foreground" 
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground"
                 onClick={() => setSearchOpen(true)}
               >
                 <Search className="w-5 h-5" />
               </Button>
-              
+
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -234,7 +235,7 @@ export const Navbar = () => {
           {/* Mobile Menu */}
           <AnimatePresence>
             {isOpen && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
@@ -248,8 +249,8 @@ export const Navbar = () => {
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
                     <p className="text-primary font-medium mb-2">Aesthetics</p>
                     {aestheticsItems.slice(0, 4).map((item, i) => (
-                      <span 
-                        key={item} 
+                      <span
+                        key={item}
                         className="block py-1.5 pl-4 text-muted-foreground"
                       >
                         {item}
@@ -259,8 +260,8 @@ export const Navbar = () => {
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
                     <p className="text-primary font-medium mb-2">Performance</p>
                     {performanceItems.slice(0, 4).map((item, i) => (
-                      <span 
-                        key={item} 
+                      <span
+                        key={item}
                         className="block py-1.5 pl-4 text-muted-foreground"
                       >
                         {item}
@@ -268,11 +269,14 @@ export const Navbar = () => {
                     ))}
                   </motion.div>
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>
+                    <Link to="/shop" className="text-foreground font-medium py-2 block" onClick={() => setIsOpen(false)}>Shop All</Link>
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
                     <Link to="/blog" className="text-foreground font-medium py-2 block" onClick={() => setIsOpen(false)}>Blog</Link>
                   </motion.div>
-                  <motion.div 
-                    initial={{ opacity: 0, x: -20 }} 
-                    animate={{ opacity: 1, x: 0 }} 
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                     className="flex items-center gap-4 pt-4 border-t border-border"
                   >
@@ -283,9 +287,9 @@ export const Navbar = () => {
                             <Button variant="outline" size="sm" className="w-full">Admin</Button>
                           </Link>
                         )}
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => {
                             handleSignOut();
                             setIsOpen(false);
@@ -300,9 +304,9 @@ export const Navbar = () => {
                         <Button variant="outline" size="sm" className="w-full">Login</Button>
                       </Link>
                     )}
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => {
                         setIsOpen(false);
                         setSearchOpen(true);
