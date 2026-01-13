@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Car, Plus, Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { getMakes, getModels, getYearRange, getFuelTypes } from '@/data/vehicleData';
 
 interface Vehicle {
   id: string;
@@ -22,16 +23,6 @@ interface Vehicle {
   nickname?: string | null;
   variant?: string | null;
 }
-
-const brands = [
-  "Maruti Suzuki", "Hyundai", "Tata", "Mahindra", "Kia", "Honda", "Toyota", 
-  "Renault", "Nissan", "Volkswagen", "Skoda", "Ford", "MG", "Jeep", 
-  "BMW", "Mercedes-Benz", "Audi", "Volvo", "Land Rover", "Jaguar", 
-  "Porsche", "Lamborghini", "Ferrari", "Rolls-Royce", "Bentley", "Lexus"
-];
-
-const years = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"];
-const fuelTypes = ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "LPG"];
 
 export default function MyGarage() {
   const { user } = useAuth();
@@ -47,6 +38,12 @@ export default function MyGarage() {
   const [year, setYear] = useState('');
   const [fuelType, setFuelType] = useState('');
   const [nickname, setNickname] = useState('');
+
+  // Smart filtering based on selections
+  const brands = getMakes();
+  const availableModels = make ? getModels(make) : [];
+  const availableYears = make && model ? getYearRange(make, model).map(String) : [];
+  const availableFuelTypes = make && model ? getFuelTypes(make, model) : [];
 
   useEffect(() => {
     if (!user) {
@@ -76,9 +73,30 @@ export default function MyGarage() {
     }
   };
 
+  const handleMakeChange = (value: string) => {
+    setMake(value);
+    setModel('');
+    setYear('');
+    setFuelType('');
+  };
+
+  const handleModelChange = (value: string) => {
+    setModel(value);
+    setYear('');
+    setFuelType('');
+  };
+
+  const handleYearChange = (value: string) => {
+    setYear(value);
+    // Keep fuel type if still valid, otherwise reset
+    if (availableFuelTypes.length > 0 && !availableFuelTypes.includes(fuelType)) {
+      setFuelType('');
+    }
+  };
+
   const handleAddVehicle = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!make || !model || !year || !fuelType) {
       toast.error('Please fill in all required fields');
       return;
@@ -143,7 +161,7 @@ export default function MyGarage() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="container-rev pt-32 pb-20">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
@@ -172,7 +190,7 @@ export default function MyGarage() {
                 <form onSubmit={handleAddVehicle} className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <Label htmlFor="make">Make *</Label>
-                    <Select value={make} onValueChange={setMake} required>
+                    <Select value={make} onValueChange={handleMakeChange} required>
                       <SelectTrigger className="bg-secondary/50">
                         <SelectValue placeholder="Select make" />
                       </SelectTrigger>
@@ -186,24 +204,26 @@ export default function MyGarage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="model">Model *</Label>
-                    <Input
-                      id="model"
-                      value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                      placeholder="e.g., Swift, Creta, Thar"
-                      className="bg-secondary/50"
-                      required
-                    />
+                    <Select value={model} onValueChange={handleModelChange} disabled={!make} required>
+                      <SelectTrigger className="bg-secondary/50">
+                        <SelectValue placeholder="Select model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableModels.map((m) => (
+                          <SelectItem key={m} value={m}>{m}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="year">Year *</Label>
-                    <Select value={year} onValueChange={setYear} required>
+                    <Select value={year} onValueChange={handleYearChange} disabled={!model} required>
                       <SelectTrigger className="bg-secondary/50">
                         <SelectValue placeholder="Select year" />
                       </SelectTrigger>
                       <SelectContent>
-                        {years.map((y) => (
+                        {availableYears.map((y) => (
                           <SelectItem key={y} value={y}>{y}</SelectItem>
                         ))}
                       </SelectContent>
@@ -212,12 +232,12 @@ export default function MyGarage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="fuelType">Fuel Type *</Label>
-                    <Select value={fuelType} onValueChange={setFuelType} required>
+                    <Select value={fuelType} onValueChange={setFuelType} disabled={!model} required>
                       <SelectTrigger className="bg-secondary/50">
                         <SelectValue placeholder="Select fuel type" />
                       </SelectTrigger>
                       <SelectContent>
-                        {fuelTypes.map((fuel) => (
+                        {availableFuelTypes.map((fuel) => (
                           <SelectItem key={fuel} value={fuel}>{fuel}</SelectItem>
                         ))}
                       </SelectContent>

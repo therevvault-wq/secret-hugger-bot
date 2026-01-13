@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Loader2, Plus, Trash2, Edit, Package } from 'lucide-react';
 import {
@@ -27,6 +28,22 @@ interface Product {
   sort_order: number;
   created_at: string;
 }
+
+const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
+const performanceItems = ["Air Intakes", "Exhaust Systems", "ECU Tuning", "Suspension", "Brake Kits", "Turbo Kits", "Intercoolers", "Performance Filters"];
+
+const productCategories = [
+  ...aestheticsItems,
+  ...performanceItems,
+  "Wheels",
+  "Tires",
+  "Lighting",
+  "Interior",
+  "Exterior",
+  "Maintenance",
+  "Merchandise",
+  "Other"
+].sort();
 
 export default function ProductsManager() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -342,11 +359,19 @@ export default function ProductsManager() {
 
             <div>
               <Label>Category</Label>
-              <Input
+              <Select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                placeholder="e.g., Body Kits, Exhaust Systems"
-              />
+                onValueChange={(value) => setFormData({ ...formData, category: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {productCategories.map((category) => (
+                    <SelectItem key={category} value={category}>{category}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>

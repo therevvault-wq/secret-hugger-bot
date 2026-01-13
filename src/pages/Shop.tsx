@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
+import { useCart } from '@/contexts/CartContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ export default function Shop() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   const make = searchParams.get('make');
   const model = searchParams.get('model');
@@ -37,7 +39,7 @@ export default function Shop() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch all active products grouped by category
       const { data, error } = await supabase
         .from('products')
@@ -66,30 +68,43 @@ export default function Shop() {
   };
 
   // Group products by category
-  const aestheticsProducts = products.filter(p => p.category?.toLowerCase() === 'aesthetics');
-  const performanceProducts = products.filter(p => p.category?.toLowerCase() === 'performance');
-  const otherProducts = products.filter(p => !p.category || (p.category.toLowerCase() !== 'aesthetics' && p.category.toLowerCase() !== 'performance'));
+  const aestheticsProducts = products.filter(p => p.category?.toLowerCase() === 'aesthetics' || p.category?.toLowerCase() === 'body kits' || p.category?.toLowerCase() === 'spoilers & wings');
+  const performanceProducts = products.filter(p => p.category?.toLowerCase() === 'performance' || p.category?.toLowerCase() === 'air intakes' || p.category?.toLowerCase() === 'exhaust systems');
+  const otherProducts = products.filter(p => {
+    const cat = p.category?.toLowerCase();
+    return !cat || (cat !== 'aesthetics' && cat !== 'performance' && cat !== 'body kits' && cat !== 'spoilers & wings' && cat !== 'air intakes' && cat !== 'exhaust systems');
+  });
 
   const renderProductCard = (product: Product) => (
-    <Card key={product.id} className="border-border hover:border-primary/50 transition-all overflow-hidden group">
-      {product.image_url && (
-        <div className="aspect-square overflow-hidden bg-secondary">
-          <img
-            src={product.image_url}
-            alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-      )}
-      <CardHeader>
-        <CardTitle className="text-xl line-clamp-2">{product.title}</CardTitle>
-        {product.description && (
-          <CardDescription className="line-clamp-2">
-            {product.description}
-          </CardDescription>
+    <Card key={product.id} className="border-border hover:border-primary/50 transition-all overflow-hidden group flex flex-col h-full">
+      <Link to={`/product/${product.id}`} className="block flex-1">
+        {product.image_url && (
+          <div className="aspect-square overflow-hidden bg-secondary relative">
+            <img
+              src={product.image_url}
+              alt={product.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            {product.compare_at_price && product.compare_at_price > product.price && (
+              <Badge className="absolute top-2 right-2 bg-destructive text-white border-none">
+                Sale
+              </Badge>
+            )}
+          </div>
         )}
-      </CardHeader>
-      <CardContent className="space-y-4">
+        <CardHeader>
+          <CardTitle className="text-xl line-clamp-2 group-hover:text-primary transition-colors">
+            {product.title}
+          </CardTitle>
+          {product.category && (
+            <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+              {product.category}
+            </div>
+          )}
+        </CardHeader>
+      </Link>
+
+      <CardContent className="space-y-4 mt-auto">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold text-primary">
             {formatPrice(product.price)}
@@ -100,7 +115,14 @@ export default function Shop() {
             </span>
           )}
         </div>
-        <Button className="w-full btn-primary">
+        <Button
+          className="w-full btn-primary"
+          onClick={(e) => {
+            e.preventDefault(); // Prevent navigation if clicked on button
+            e.stopPropagation();
+            addToCart(product);
+          }}
+        >
           <ShoppingCart className="w-4 h-4 mr-2" />
           Add to Cart
         </Button>
@@ -111,7 +133,7 @@ export default function Shop() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="container-rev pt-32 pb-20">
         <div className="mb-8">
           <h1 className="font-display text-4xl md:text-5xl mb-4">

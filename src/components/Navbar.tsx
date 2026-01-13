@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Search, User, ChevronDown, LogOut, Shield, Package, UserCircle, MapPin, Gift, Car } from "lucide-react";
+import { Menu, X, Search, User, ChevronDown, LogOut, Shield, Package, UserCircle, MapPin, Gift, Car, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchModal } from "@/components/SearchModal";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
@@ -25,6 +26,7 @@ export const Navbar = () => {
   const [userName, setUserName] = useState<string | null>(null);
 
   const { user, isAdmin, signOut } = useAuth();
+  const { cartCount, setIsOpen: setIsCartOpen } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -160,6 +162,20 @@ export const Navbar = () => {
                 <Search className="w-5 h-5" />
               </Button>
 
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground relative"
+                onClick={() => setIsCartOpen(true)}
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Button>
+
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -227,9 +243,24 @@ export const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <button className="lg:hidden text-foreground" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            <div className="flex lg:hidden items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground relative"
+                onClick={() => setIsCartOpen(true)}
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Button>
+              <button className="text-foreground" onClick={() => setIsOpen(!isOpen)}>
+                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
 
           {/* Mobile Menu */}
