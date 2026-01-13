@@ -56,56 +56,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    const initializeAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    // Set up auth state listener - this handles all auth events including OAuth callbacks
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
 
-      if (mounted) {
-        console.log('Initial session check:', session ? 'Session found' : 'No session');
+        console.log('Auth state change event:', event);
+        console.log('Session user email:', session?.user?.email);
+
+        // Update state synchronously first
         setSession(session);
         setUser(session?.user ?? null);
 
-        if (session?.user) {
-          await checkAdminRole(session.user.id);
-        }
-
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
-
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (mounted) {
-          console.log('Auth state change event:', event);
-          console.log('Session user email:', session?.user?.email);
-
-          setSession(session);
-          setUser(session?.user ?? null);
-
-          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-            if (session?.user) {
-              await checkAdminRole(session.user.id);
+        // Then handle async operations
+        if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
+          // Use setTimeout to avoid potential Supabase auth deadlock
+          setTimeout(() => {
+            if (mounted) {
+              checkAdminRole(session.user.id);
             }
-          }
-
-          if (event === 'SIGNED_OUT') {
-            setIsAdmin(false);
-            setUser(null);
-            setSession(null);
-          }
-
-          // Only set loading to false if we haven't already
-          if (event === 'INITIAL_SESSION') {
-            setLoading(false);
-          }
+          }, 0);
         }
+
+        if (event === 'SIGNED_OUT') {
+          setIsAdmin(false);
+        }
+
+        // Set loading false after any auth event
+        setLoading(false);
       }
     );
 
+    // Also check for existing session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (mounted && session) {
+        console.log('Found existing session for:', session.user?.email);
+        setSession(session);
+        setUser(session.user);
+        checkAdminRole(session.user.id);
+      }
+      if (mounted) {
+        setLoading(false);
+      }
+    });
+
     return () => {
-      console.log('Auth provider unmounting');
       mounted = false;
       subscription.unsubscribe();
     };
