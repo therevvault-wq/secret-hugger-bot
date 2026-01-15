@@ -1,9 +1,46 @@
-import { Instagram, Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { Instagram, Mail, Phone, MapPin, MessageCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsSubscribing(true);
+    try {
+      const { error } = await (supabase as any)
+        .from("newsletter_subscribers")
+        .insert([{ email }]);
+
+      if (error) {
+        if (error.code === "23505") {
+          toast.info("You're already subscribed to our newsletter!");
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success("Welcome to the Vault! You've successfully subscribed.");
+        setEmail("");
+      }
+    } catch (error: any) {
+      console.error("Subscription error:", error);
+      toast.error("Failed to subscribe. Please try again later.");
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
   return (
     <footer className="bg-card border-t border-border">
       {/* Newsletter Section */}
@@ -18,13 +55,27 @@ export const Footer = () => {
                 Get exclusive deals and early access to new arrivals
               </p>
             </div>
-            <div className="flex gap-3 w-full md:w-auto">
+            <form onSubmit={handleSubscribe} className="flex gap-3 w-full md:w-auto">
               <Input
+                type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="bg-secondary border-border w-full md:w-72"
+                required
               />
-              <Button className="btn-primary px-6">Subscribe</Button>
-            </div>
+              <Button
+                type="submit"
+                className="btn-primary px-6"
+                disabled={isSubscribing}
+              >
+                {isSubscribing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Subscribe"
+                )}
+              </Button>
+            </form>
           </div>
         </div>
       </div>

@@ -105,31 +105,31 @@ export default function ProductDetails() {
                     Back
                 </Button>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
-                    <div className="space-y-4">
-                        <div className="bg-secondary/20 rounded-2xl overflow-hidden aspect-square border border-border">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+                    <div className="space-y-6">
+                        <div className="bg-white rounded-3xl overflow-hidden aspect-square border border-border flex items-center justify-center max-h-[600px] shadow-sm">
                             {selectedImage ? (
                                 <img
                                     src={selectedImage}
                                     alt={product.title}
-                                    className="w-full h-full object-cover"
+                                    className="max-w-full max-h-full object-contain p-4"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center">
+                                <div className="w-full h-full flex items-center justify-center bg-secondary/20">
                                     <Package className="w-24 h-24 text-muted-foreground/30" />
                                 </div>
                             )}
                         </div>
 
                         {product.images && product.images.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-3">
                                 {[product.image_url, ...product.images.filter(img => img !== product.image_url)].filter(Boolean).map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setSelectedImage(img!)}
-                                        className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                                        className={`w-24 h-24 rounded-xl overflow-hidden border-2 transition-all p-1 bg-white shadow-sm ${selectedImage === img ? 'border-primary ring-2 ring-primary/20' : 'border-transparent opacity-70 hover:opacity-100 hover:border-gray-200'}`}
                                     >
-                                        <img src={img!} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                                        <img src={img!} alt={`Gallery ${idx}`} className="w-full h-full object-contain" />
                                     </button>
                                 ))}
                             </div>
@@ -137,7 +137,7 @@ export default function ProductDetails() {
                     </div>
 
                     {/* Product Info */}
-                    <div className="space-y-6">
+                    <div className="space-y-6 min-w-0">
                         <div>
                             {product.category && (
                                 <Badge variant="secondary" className="mb-4">
@@ -159,18 +159,21 @@ export default function ProductDetails() {
                             </div>
                         </div>
 
-                        <Card className="border-border bg-card/50">
-                            <CardContent className="pt-6">
-                                {product.description ? (
-                                    <div
-                                        className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
-                                        dangerouslySetInnerHTML={{ __html: product.description }}
-                                    />
-                                ) : (
-                                    <p className="text-muted-foreground">No description available for this product.</p>
-                                )}
-                            </CardContent>
-                        </Card>
+                        <div className="border-t border-border/10 pt-8 mt-4">
+                            {product.description ? (
+                                <div
+                                    className="prose prose-rev prose-invert max-w-none w-full break-words
+                                    prose-headings:font-display prose-headings:text-foreground prose-headings:mb-4 prose-headings:uppercase prose-headings:tracking-wider
+                                    prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
+                                    prose-strong:text-foreground prose-strong:font-bold
+                                    prose-ul:list-disc prose-ul:pl-5 prose-ul:mb-6 prose-ul:space-y-1
+                                    prose-li:text-muted-foreground"
+                                    dangerouslySetInnerHTML={{ __html: product.description }}
+                                />
+                            ) : (
+                                <p className="text-muted-foreground italic">No description available for this product.</p>
+                            )}
+                        </div>
 
                         <div className="pt-4 space-y-4">
                             <div className="flex flex-col gap-4 sm:flex-row">

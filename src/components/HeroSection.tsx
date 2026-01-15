@@ -47,7 +47,7 @@ export const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
 
       {/* Content */}
-      <div className="w-full relative z-10 pt-24 md:pt-20 px-4 sm:px-8 lg:pl-20 xl:pl-32">
+      <div className="w-full relative z-10 pt-32 md:pt-36 px-4 sm:px-8 lg:pl-20 xl:pl-32">
         <div className="max-w-3xl">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}

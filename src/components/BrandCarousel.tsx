@@ -14,6 +14,7 @@ const brands = [
   { name: "KW", logo: "/brands/kw.png" },
   { name: "Akrapovic", logo: "/brands/akrapovic.jpg" },
   { name: "Forge", logo: "/brands/forge.jpg" },
+  { name: "MAXSPEED", logo: "/brands/maxspeed.jpg" },
 ];
 
 export const BrandCarousel = () => {

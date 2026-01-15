@@ -114,6 +114,15 @@ export default function ProductsManager() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    // Validate file size (max 5MB per image to prevent upload failures)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    const oversizedFiles = Array.from(files).filter(file => file.size > MAX_SIZE);
+
+    if (oversizedFiles.length > 0) {
+      toast.error(`Some files are too large. Max size is 5MB. (${oversizedFiles[0].name})`);
+      return;
+    }
+
     setUploading(true);
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
@@ -140,13 +149,14 @@ export default function ProductsManager() {
           ...prev,
           images: [...(prev.images || []), ...uploadedUrls]
         }));
-        toast.success(`${uploadedUrls.length} images uploaded`);
+        toast.success(`${uploadedUrls.length} images added to gallery`);
       } else {
         setFormData(prev => ({ ...prev, image_url: uploadedUrls[0] }));
-        toast.success('Primary image updated');
+        toast.success('Main image updated');
       }
     } catch (error: any) {
-      toast.error('Failed to upload images');
+      console.error('Upload error:', error);
+      toast.error('Failed to upload images. Please try smaller files.');
     } finally {
       setUploading(false);
     }
@@ -462,22 +472,34 @@ export default function ProductsManager() {
             </div>
 
             <div>
-              <Label>Image</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Primary Image</Label>
+                <span className="text-[10px] text-muted-foreground italic">Recommended: 1000x1000px, Max 5MB</span>
+              </div>
               <div className="flex gap-2 items-center">
                 <Input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
                   disabled={uploading}
+                  className="cursor-pointer"
                 />
                 {uploading && <Loader2 className="w-4 h-4 animate-spin" />}
               </div>
               {formData.image_url && (
-                <img
-                  src={formData.image_url}
-                  alt="Preview"
-                  className="mt-2 w-full aspect-square object-cover rounded-lg"
-                />
+                <div className="mt-2 relative group w-full aspect-square max-h-[200px] border border-border rounded-lg overflow-hidden bg-white">
+                  <img
+                    src={formData.image_url}
+                    alt="Preview"
+                    className="w-full h-full object-contain p-2"
+                  />
+                  <button
+                    onClick={() => setFormData(prev => ({ ...prev, image_url: '' }))}
+                    className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               )}
             </div>
 

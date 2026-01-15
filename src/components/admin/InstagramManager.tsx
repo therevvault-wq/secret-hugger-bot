@@ -31,13 +31,13 @@ export default function InstagramManager() {
 
     const fetchPosts = async () => {
         try {
-            const { data, error } = await supabase
+            const { data, error } = await (supabase as any)
                 .from('instagram_posts')
                 .select('*')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
-            setPosts(data || []);
+            setPosts((data as any) || []);
         } catch (error) {
             console.error('Error fetching posts:', error);
             toast.error('Failed to load Instagram posts');
@@ -47,9 +47,17 @@ export default function InstagramManager() {
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setThumbnailFile(e.target.files[0]);
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file size (max 5MB)
+        const MAX_SIZE = 5 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            toast.error("Thumbnail is too large. Max size is 5MB.");
+            return;
         }
+
+        setThumbnailFile(file);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -77,7 +85,7 @@ export default function InstagramManager() {
                 .getPublicUrl(filePath);
 
             // 2. Insert Post
-            const { error: insertError } = await supabase
+            const { error: insertError } = await (supabase as any)
                 .from('instagram_posts')
                 .insert({
                     post_url: formData.post_url,
@@ -108,7 +116,7 @@ export default function InstagramManager() {
 
         try {
             // 1. Delete DB Record
-            const { error: deleteError } = await supabase
+            const { error: deleteError } = await (supabase as any)
                 .from('instagram_posts')
                 .delete()
                 .eq('id', id);
@@ -155,7 +163,10 @@ export default function InstagramManager() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="thumbnail">Thumbnail Image</Label>
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="thumbnail">Thumbnail Image</Label>
+                                    <span className="text-[10px] text-muted-foreground italic">Max 5MB</span>
+                                </div>
                                 <div className="flex items-center gap-2">
                                     <Input
                                         id="thumbnail"

@@ -84,6 +84,13 @@ export default function BlogManager() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file size (max 5MB)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      toast.error("Image is too large. Max size is 5MB.");
+      return;
+    }
+
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
@@ -102,7 +109,8 @@ export default function BlogManager() {
       setFormData({ ...formData, featured_image_url: urlData.publicUrl });
       toast.success('Image uploaded');
     } catch (error: any) {
-      toast.error('Failed to upload image');
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image. Please try a smaller file.');
     } finally {
       setUploading(false);
     }
@@ -311,7 +319,10 @@ export default function BlogManager() {
             </div>
 
             <div>
-              <Label>Featured Image</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Featured Image</Label>
+                <span className="text-[10px] text-muted-foreground italic">Recommended: 1200x630px, Max 5MB</span>
+              </div>
               <div className="flex gap-2 items-center">
                 <Input
                   type="file"

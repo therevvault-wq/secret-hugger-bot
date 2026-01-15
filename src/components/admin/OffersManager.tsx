@@ -66,6 +66,13 @@ export default function OffersManager() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file size (max 5MB)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      toast.error("Image is too large. Max size is 5MB.");
+      return;
+    }
+
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
@@ -84,7 +91,8 @@ export default function OffersManager() {
       setFormData({ ...formData, image_url: urlData.publicUrl });
       toast.success('Image uploaded');
     } catch (error: any) {
-      toast.error('Failed to upload image');
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image. Please try a smaller file.');
     } finally {
       setUploading(false);
     }
@@ -269,7 +277,7 @@ export default function OffersManager() {
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingOffer ? 'Edit Offer' : 'Create New Offer'}
@@ -296,22 +304,36 @@ export default function OffersManager() {
             </div>
 
             <div>
-              <Label>Image *</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Image *</Label>
+                <span className="text-[10px] text-muted-foreground italic">Recommended: 1200x675px (16:9), Max 5MB</span>
+              </div>
               <div className="flex gap-2 items-center">
                 <Input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
                   disabled={uploading}
+                  className="cursor-pointer"
                 />
                 {uploading && <Loader2 className="w-4 h-4 animate-spin" />}
               </div>
               {formData.image_url && (
-                <img
-                  src={formData.image_url}
-                  alt="Preview"
-                  className="mt-2 w-full aspect-[16/9] object-cover rounded-lg"
-                />
+                <div className="mt-2 relative group w-full aspect-[16/9] max-h-[200px] border border-border rounded-lg overflow-hidden bg-white/5">
+                  <img
+                    src={formData.image_url}
+                    alt="Preview"
+                    className="w-full h-full object-contain"
+                  />
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => setFormData({ ...formData, image_url: '' })}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               )}
             </div>
 

@@ -54,7 +54,7 @@ export default function Admin() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
-      <main className="flex-1 py-20 px-4">
+      <main className="flex-1 pt-32 pb-20 px-4">
         <div className="container-rev">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
