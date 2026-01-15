@@ -24,6 +24,7 @@ interface Product {
   compare_at_price: number | null;
   image_url: string | null;
   category: string | null;
+  product_type: string | null;
   is_active: boolean;
   sort_order: number;
   created_at: string;
@@ -60,6 +61,7 @@ export default function ProductsManager() {
     compare_at_price: '',
     image_url: '',
     category: '',
+    product_type: '',
     is_active: true,
     sort_order: 0,
   });
@@ -121,6 +123,7 @@ export default function ProductsManager() {
       compare_at_price: '',
       image_url: '',
       category: '',
+      product_type: '',
       is_active: true,
       sort_order: products.length,
     });
@@ -136,6 +139,7 @@ export default function ProductsManager() {
       compare_at_price: product.compare_at_price?.toString() || '',
       image_url: product.image_url || '',
       category: product.category || '',
+      product_type: product.product_type || '',
       is_active: product.is_active ?? true,
       sort_order: product.sort_order ?? 0,
     });
@@ -157,6 +161,7 @@ export default function ProductsManager() {
         compare_at_price: formData.compare_at_price ? parseFloat(formData.compare_at_price) : null,
         image_url: formData.image_url || null,
         category: formData.category || null,
+        product_type: formData.product_type || null,
         is_active: formData.is_active,
         sort_order: formData.sort_order,
       };
@@ -266,9 +271,16 @@ export default function ProductsManager() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-foreground truncate">{product.title}</h3>
-                {product.category && (
-                  <p className="text-xs text-muted-foreground">{product.category}</p>
-                )}
+                <div className="flex items-center gap-2 mt-1">
+                  {product.product_type && (
+                    <Badge variant="outline" className="text-xs">
+                      {product.product_type}
+                    </Badge>
+                  )}
+                  {product.category && (
+                    <p className="text-xs text-muted-foreground">{product.category}</p>
+                  )}
+                </div>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="font-bold text-primary">₹{product.price}</span>
                   {product.compare_at_price && (
@@ -355,6 +367,22 @@ export default function ProductsManager() {
                   placeholder="0.00"
                 />
               </div>
+            </div>
+
+            <div>
+              <Label>Product Type</Label>
+              <Select
+                value={formData.product_type}
+                onValueChange={(value) => setFormData({ ...formData, product_type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Product Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Aesthetics">Aesthetics</SelectItem>
+                  <SelectItem value="Performance">Performance</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>

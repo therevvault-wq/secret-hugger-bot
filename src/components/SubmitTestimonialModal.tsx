@@ -56,7 +56,7 @@ export const SubmitTestimonialModal = () => {
       if (error) throw error;
       
       toast.success('Thank you for your time!', {
-        description: 'Testimonial submitted successfully. It will appear on the site once approved.',
+        description: 'Thank you for sharing your experience with us! Your feedback helps us improve',
       });
       
       // Reset form
@@ -96,7 +96,7 @@ export const SubmitTestimonialModal = () => {
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">Share Your Experience</DialogTitle>
           <DialogDescription>
-            Tell us about your experience with TheRevVault. Your testimonial will be reviewed before publishing.
+            Tell us about your experience with TheRevVault. Your feedback helps us improve!
           </DialogDescription>
         </DialogHeader>
         

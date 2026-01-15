@@ -41,18 +41,18 @@ export const Footer = () => {
               Premium automotive aesthetic and performance parts imported from around the world.
             </p>
             <div className="flex gap-4">
-              <a 
-                href="https://www.instagram.com/therevvault" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://www.instagram.com/therevvault"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary transition-colors"
               >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a 
-                href="https://wa.me/919717820775?text=Hi, I'm reaching out from your website and would like to connect for more details" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://wa.me/919717820775?text=Hi, I'm reaching out from your website and would like to connect for more details"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
@@ -137,8 +137,8 @@ export const Footer = () => {
               © {new Date().getFullYear()} TheRevVault. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <Link to="/privacy" className="text-muted-foreground hover:text-foreground text-sm">Privacy Policy</Link>
-              <Link to="/terms" className="text-muted-foreground hover:text-foreground text-sm">Terms & Conditions</Link>
+              <Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground text-sm">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="text-muted-foreground hover:text-foreground text-sm">Terms & Conditions</Link>
             </div>
           </div>
         </div>

@@ -1,14 +1,19 @@
 const brands = [
-  "VORSTEINER",
-  "AKRAPOVIČ",
-  "BBS",
-  "HKS",
-  "BREMBO",
-  "KW",
-  "EVENTURI",
-  "ARMYTRIX",
-  "IPE",
-  "CAPRISTO",
+  { name: "Borla", logo: "/brands/borla.png" },
+  { name: "Eibach", logo: "/brands/eibach.png" },
+  { name: "EBC", logo: "/brands/ebc.png" },
+  { name: "BMC", logo: "/brands/bmc.jpg" },
+  { name: "HEL", logo: "/brands/hel.jpg" },
+  { name: "Brembo", logo: "/brands/brembo.png" },
+  { name: "Brisk", logo: "/brands/brisk.jpg" },
+  { name: "Liqui Moly", logo: "/brands/liqui-moly.png" },
+  { name: "Pagid Racing", logo: "/brands/pagid.png" },
+  { name: "DBA", logo: "/brands/dba.png" },
+  { name: "Motul", logo: "/brands/motul.png" },
+  { name: "Bilstein", logo: "/brands/bilstein.png" },
+  { name: "KW", logo: "/brands/kw.png" },
+  { name: "Akrapovic", logo: "/brands/akrapovic.jpg" },
+  { name: "Forge", logo: "/brands/forge.jpg" },
 ];
 
 export const BrandCarousel = () => {
@@ -26,11 +31,13 @@ export const BrandCarousel = () => {
           {[...brands, ...brands].map((brand, i) => (
             <div
               key={i}
-              className="flex-shrink-0 flex items-center justify-center px-8 py-6 bg-card/50 border border-border/50 rounded-lg min-w-[180px] h-[80px] hover:border-primary/50 transition-colors group"
+              className="flex-shrink-0 flex items-center justify-center px-8 py-6 bg-white border border-border/50 rounded-lg min-w-[180px] h-[100px] hover:border-primary/50 transition-colors group"
             >
-              <span className="font-display text-xl text-muted-foreground group-hover:text-foreground transition-colors tracking-wider">
-                {brand}
-              </span>
+              <img
+                src={brand.logo}
+                alt={brand.name}
+                className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+              />
             </div>
           ))}
         </div>
