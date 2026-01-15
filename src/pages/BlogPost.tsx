@@ -120,9 +120,6 @@ export default function BlogPost() {
                                 <span className="flex items-center gap-1">
                                     <Calendar className="w-4 h-4" /> {formatDate(post.created_at)}
                                 </span>
-                                <span className="flex items-center gap-1">
-                                    <User className="w-4 h-4" /> The Rev Vault Team
-                                </span>
                             </div>
 
                             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground mb-8 text-balance">
@@ -151,15 +148,10 @@ export default function BlogPost() {
 
                     <SectionReveal delay={0.2}>
                         <div className="container-rev max-w-3xl mx-auto">
-                            <article className="prose prose-lg prose-invert max-w-none">
-                                {/* 
-                    Since we are using partial HTML/Text, we render paragraphs carefully. 
-                    If the content comes from a simple textarea, it might just be newlines.
-                 */}
-                                {post.content.split('\n').map((paragraph, idx) => (
-                                    paragraph.trim() ? <p key={idx} className="mb-4 text-muted-foreground leading-relaxed">{paragraph}</p> : <br key={idx} />
-                                ))}
-                            </article>
+                            <article
+                                className="prose prose-lg prose-invert max-w-none"
+                                dangerouslySetInnerHTML={{ __html: post.content }}
+                            />
                         </div>
                     </SectionReveal>
                 </main>

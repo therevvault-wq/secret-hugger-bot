@@ -7,12 +7,22 @@ export const RotatingLogo = () => {
       href="https://wa.me/919717820775?text=Hi, I would like to inquire about parts from The Rev Vault."
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-40 cursor-pointer"
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 1, type: "spring" }}
-      whileHover={{ scale: 1.1 }}
+      className="fixed bottom-6 right-6 z-40 flex items-center gap-3 cursor-pointer group"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, delay: 1 }}
     >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, x: 10 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ delay: 1.5, duration: 0.5 }}
+        className="bg-background border border-primary/20 px-4 py-2 rounded-2xl shadow-xl hidden md:block"
+      >
+        <p className="text-sm font-medium text-foreground whitespace-nowrap">
+          Hi, need any assistance?
+        </p>
+      </motion.div>
+
       <div className="relative">
         {/* Glow ring */}
         <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse-glow" />

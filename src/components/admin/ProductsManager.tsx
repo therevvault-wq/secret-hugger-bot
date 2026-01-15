@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2, Edit, Package } from 'lucide-react';
+import { Loader2, Plus, Trash2, Edit, Package, X, Image as ImageIcon, Upload } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ interface Product {
   price: number;
   compare_at_price: number | null;
   image_url: string | null;
+  images: string[] | null;
   category: string | null;
   product_type: string | null;
   is_active: boolean;
@@ -60,11 +62,33 @@ export default function ProductsManager() {
     price: '',
     compare_at_price: '',
     image_url: '',
+    images: [] as string[],
     category: '',
     product_type: '',
     is_active: true,
     sort_order: 0,
   });
+
+  // Form persistence
+  useEffect(() => {
+    const savedForm = localStorage.getItem('product_form_draft');
+    if (savedForm && !editingProduct && dialogOpen) {
+      try {
+        const parsed = JSON.parse(savedForm);
+        setFormData(prev => ({ ...prev, ...parsed }));
+      } catch (e) {
+        console.error('Failed to parse saved form');
+      }
+    }
+  }, [dialogOpen, editingProduct]);
+
+  useEffect(() => {
+    if (dialogOpen && !editingProduct) {
+      localStorage.setItem('product_form_draft', JSON.stringify(formData));
+    }
+  }, [formData, dialogOpen, editingProduct]);
+
+  const clearDraft = () => localStorage.removeItem('product_form_draft');
 
   useEffect(() => {
     fetchProducts();
@@ -78,7 +102,7 @@ export default function ProductsManager() {
         .order('sort_order', { ascending: true });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data as any) || []);
     } catch (error: any) {
       toast.error('Failed to fetch products');
     } finally {
@@ -86,32 +110,53 @@ export default function ProductsManager() {
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isMultiple: boolean = false) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, file);
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-      const { data: urlData } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(fileName);
+        const { data: urlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(fileName);
 
-      setFormData({ ...formData, image_url: urlData.publicUrl });
-      toast.success('Image uploaded');
+        return urlData.publicUrl;
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+
+      if (isMultiple) {
+        setFormData(prev => ({
+          ...prev,
+          images: [...(prev.images || []), ...uploadedUrls]
+        }));
+        toast.success(`${uploadedUrls.length} images uploaded`);
+      } else {
+        setFormData(prev => ({ ...prev, image_url: uploadedUrls[0] }));
+        toast.success('Primary image updated');
+      }
     } catch (error: any) {
-      toast.error('Failed to upload image');
+      toast.error('Failed to upload images');
     } finally {
       setUploading(false);
     }
+  };
+
+  const removeImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
   };
 
   const openCreateDialog = () => {
@@ -122,6 +167,7 @@ export default function ProductsManager() {
       price: '',
       compare_at_price: '',
       image_url: '',
+      images: [],
       category: '',
       product_type: '',
       is_active: true,
@@ -138,6 +184,7 @@ export default function ProductsManager() {
       price: product.price.toString(),
       compare_at_price: product.compare_at_price?.toString() || '',
       image_url: product.image_url || '',
+      images: product.images || [],
       category: product.category || '',
       product_type: product.product_type || '',
       is_active: product.is_active ?? true,
@@ -160,6 +207,7 @@ export default function ProductsManager() {
         price: parseFloat(formData.price),
         compare_at_price: formData.compare_at_price ? parseFloat(formData.compare_at_price) : null,
         image_url: formData.image_url || null,
+        images: formData.images,
         category: formData.category || null,
         product_type: formData.product_type || null,
         is_active: formData.is_active,
@@ -184,6 +232,7 @@ export default function ProductsManager() {
       }
 
       setDialogOpen(false);
+      clearDraft();
       fetchProducts();
     } catch (error: any) {
       toast.error(error.message || 'Failed to save product');
@@ -340,12 +389,22 @@ export default function ProductsManager() {
 
             <div>
               <Label>Description</Label>
-              <Textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Product description"
-                rows={3}
-              />
+              <div className="mt-1 quill-editor">
+                <ReactQuill
+                  theme="snow"
+                  value={formData.description}
+                  onChange={(content) => setFormData({ ...formData, description: content })}
+                  placeholder="Product description"
+                  modules={{
+                    toolbar: [
+                      [{ 'header': [1, 2, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                      ['clean']
+                    ],
+                  }}
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -420,6 +479,36 @@ export default function ProductsManager() {
                   className="mt-2 w-full aspect-square object-cover rounded-lg"
                 />
               )}
+            </div>
+
+            <div>
+              <Label>Gallery Images</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {formData.images?.map((url, index) => (
+                  <div key={index} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border group">
+                    <img src={url} alt="Gallery" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+                <label className="w-20 h-20 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/50 transition-colors">
+                  <Upload className="w-6 h-6 text-muted-foreground" />
+                  <span className="text-[10px] text-muted-foreground mt-1">Add More</span>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleImageUpload(e, true)}
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
             </div>
 
             <div>

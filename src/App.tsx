@@ -7,10 +7,12 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import Orders from "./pages/Orders";
 import Shop from "./pages/Shop";
+import ProductDetails from "./pages/ProductDetails";
 import Profile from "./pages/Profile";
 import MyGarage from "./pages/MyGarage";
 import Addresses from "./pages/Addresses";
@@ -20,6 +22,10 @@ import RefundPolicy from "./pages/RefundPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import NotFound from "./pages/NotFound";
+import { CartSheet } from "@/components/CartSheet";
+import { ScrollToTopOnNavigation } from "./components/ScrollToTopOnNavigation";
+import { PageTransition } from "./components/PageTransition";
+import { AnimatePresence } from "framer-motion";
 
 const queryClient = new QueryClient();
 
@@ -31,24 +37,29 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/garage" element={<MyGarage />} />
-              <Route path="/addresses" element={<Addresses />} />
-              <Route path="/coupons" element={<Coupons />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/refund-policy" element={<RefundPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/shipping-policy" element={<ShippingPolicy />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <ScrollToTopOnNavigation />
+            <CartSheet />
+            <AnimatePresence mode="wait">
+              <Routes>
+                <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+                <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+                <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
+                <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+                <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
+                <Route path="/orders" element={<PageTransition><Orders /></PageTransition>} />
+                <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
+                <Route path="/product/:id" element={<PageTransition><ProductDetails /></PageTransition>} />
+                <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
+                <Route path="/garage" element={<PageTransition><MyGarage /></PageTransition>} />
+                <Route path="/addresses" element={<PageTransition><Addresses /></PageTransition>} />
+                <Route path="/coupons" element={<PageTransition><Coupons /></PageTransition>} />
+                <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+                <Route path="/refund-policy" element={<PageTransition><RefundPolicy /></PageTransition>} />
+                <Route path="/terms-of-service" element={<PageTransition><TermsOfService /></PageTransition>} />
+                <Route path="/shipping-policy" element={<PageTransition><ShippingPolicy /></PageTransition>} />
+                <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+              </Routes>
+            </AnimatePresence>
           </BrowserRouter>
         </CartProvider>
       </AuthProvider>

@@ -316,7 +316,7 @@ export default function OffersManager() {
             </div>
 
             <div>
-              <Label>Link</Label>
+              <Label>Product Link</Label>
               <Input
                 value={formData.link}
                 onChange={(e) => setFormData({ ...formData, link: e.target.value })}

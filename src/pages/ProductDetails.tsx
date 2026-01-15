@@ -17,7 +17,9 @@ interface Product {
     price: number;
     compare_at_price: number | null;
     image_url: string | null;
+    images: string[] | null;
     category: string | null;
+    product_type: string | null;
     is_active: boolean;
 }
 
@@ -26,6 +28,7 @@ export default function ProductDetails() {
     const navigate = useNavigate();
     const { addToCart } = useCart();
     const [product, setProduct] = useState<Product | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string>('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -44,7 +47,8 @@ export default function ProductDetails() {
                 .single();
 
             if (error) throw error;
-            setProduct(data);
+            setProduct(data as any);
+            setSelectedImage((data as any).image_url || ((data as any).images?.[0]) || '');
         } catch (error: any) {
             toast.error('Failed to load product');
             navigate('/shop');
@@ -102,17 +106,32 @@ export default function ProductDetails() {
                 </Button>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
-                    {/* Product Image */}
-                    <div className="bg-secondary/20 rounded-2xl overflow-hidden aspect-square border border-border">
-                        {product.image_url ? (
-                            <img
-                                src={product.image_url}
-                                alt={product.title}
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                                <Package className="w-24 h-24 text-muted-foreground/30" />
+                    <div className="space-y-4">
+                        <div className="bg-secondary/20 rounded-2xl overflow-hidden aspect-square border border-border">
+                            {selectedImage ? (
+                                <img
+                                    src={selectedImage}
+                                    alt={product.title}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <Package className="w-24 h-24 text-muted-foreground/30" />
+                                </div>
+                            )}
+                        </div>
+
+                        {product.images && product.images.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {[product.image_url, ...product.images.filter(img => img !== product.image_url)].filter(Boolean).map((img, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setSelectedImage(img!)}
+                                        className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                                    >
+                                        <img src={img!} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
                             </div>
                         )}
                     </div>
@@ -142,9 +161,14 @@ export default function ProductDetails() {
 
                         <Card className="border-border bg-card/50">
                             <CardContent className="pt-6">
-                                <p className="text-muted-foreground leading-relaxed">
-                                    {product.description || "No description available for this product."}
-                                </p>
+                                {product.description ? (
+                                    <div
+                                        className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: product.description }}
+                                    />
+                                ) : (
+                                    <p className="text-muted-foreground">No description available for this product.</p>
+                                )}
                             </CardContent>
                         </Card>
 

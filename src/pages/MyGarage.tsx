@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Car, Plus, Trash2, Loader2 } from 'lucide-react';
+import { Car, Plus, Trash2, Loader2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import { getMakes, getModels, getYearRange, getFuelTypes } from '@/data/vehicleData';
 
@@ -30,6 +30,7 @@ export default function MyGarage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Form state
@@ -101,28 +102,43 @@ export default function MyGarage() {
       toast.error('Please fill in all required fields');
       return;
     }
-
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('user_vehicles')
-        .insert({
-          user_id: user?.id as string,
-          make,
-          model,
-          year: parseInt(year),
-          fuel_type: fuelType,
-          nickname: nickname || null,
-        });
+      if (editingVehicle) {
+        const { error } = await supabase
+          .from('user_vehicles')
+          .update({
+            make,
+            model,
+            year: parseInt(year),
+            fuel_type: fuelType,
+            nickname: nickname || null,
+          })
+          .eq('id', editingVehicle.id);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success('Vehicle updated successfully!');
+      } else {
+        const { error } = await supabase
+          .from('user_vehicles')
+          .insert({
+            user_id: user?.id as string,
+            make,
+            model,
+            year: parseInt(year),
+            fuel_type: fuelType,
+            nickname: nickname || null,
+          });
 
-      toast.success('Vehicle added to your garage!');
+        if (error) throw error;
+        toast.success('Vehicle added to your garage!');
+      }
+
       setDialogOpen(false);
       resetForm();
       fetchVehicles();
     } catch (error: any) {
-      toast.error('Failed to add vehicle', {
+      toast.error('Failed to save vehicle', {
         description: error.message,
       });
     } finally {
@@ -154,6 +170,17 @@ export default function MyGarage() {
     setYear('');
     setFuelType('');
     setNickname('');
+    setEditingVehicle(null);
+  };
+
+  const openEditDialog = (vehicle: Vehicle) => {
+    setEditingVehicle(vehicle);
+    setMake(vehicle.make);
+    setModel(vehicle.model);
+    setYear(vehicle.year.toString());
+    setFuelType(vehicle.fuel_type);
+    setNickname(vehicle.nickname || '');
+    setDialogOpen(true);
   };
 
   if (!user) return null;
@@ -182,9 +209,11 @@ export default function MyGarage() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Add Vehicle to Garage</DialogTitle>
+                  <DialogTitle>{editingVehicle ? 'Edit Vehicle' : 'Add Vehicle to Garage'}</DialogTitle>
                   <DialogDescription>
-                    Add your vehicle details to get personalized product recommendations
+                    {editingVehicle
+                      ? 'Update your vehicle details'
+                      : 'Add your vehicle details to get personalized product recommendations'}
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleAddVehicle} className="space-y-4 mt-4">
@@ -262,7 +291,7 @@ export default function MyGarage() {
                         Adding...
                       </>
                     ) : (
-                      'Add Vehicle'
+                      editingVehicle ? 'Update Vehicle' : 'Add Vehicle'
                     )}
                   </Button>
                 </form>
@@ -303,14 +332,24 @@ export default function MyGarage() {
                           <CardDescription>{vehicle.model}</CardDescription>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-muted-foreground hover:text-destructive"
-                        onClick={() => handleDeleteVehicle(vehicle.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground hover:text-primary"
+                          onClick={() => openEditDialog(vehicle)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground hover:text-destructive"
+                          onClick={() => handleDeleteVehicle(vehicle.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2">

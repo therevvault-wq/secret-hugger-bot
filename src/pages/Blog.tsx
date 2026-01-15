@@ -117,9 +117,6 @@ const Blog = () => {
                           </p>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
-                              <User className="w-4 h-4" /> The Rev Vault Team
-                            </span>
-                            <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" /> {formatDate(blogs[0].created_at)}
                             </span>
                           </div>

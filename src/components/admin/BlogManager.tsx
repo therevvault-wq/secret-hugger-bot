@@ -8,6 +8,8 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Loader2, Plus, Trash2, Edit, Eye, Image as ImageIcon } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import {
   Dialog,
   DialogContent,
@@ -340,12 +342,23 @@ export default function BlogManager() {
 
             <div>
               <Label>Content *</Label>
-              <Textarea
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Blog content..."
-                rows={10}
-              />
+              <div className="mt-1 quill-editor">
+                <ReactQuill
+                  theme="snow"
+                  value={formData.content}
+                  onChange={(content) => setFormData({ ...formData, content })}
+                  placeholder="Blog content..."
+                  modules={{
+                    toolbar: [
+                      [{ 'header': [1, 2, 3, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                      ['link', 'blockquote', 'code-block'],
+                      ['clean']
+                    ],
+                  }}
+                />
+              </div>
             </div>
 
             <div className="flex items-center gap-2">

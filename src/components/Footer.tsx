@@ -60,15 +60,20 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h5 className="font-display text-lg text-foreground mb-4">QUICK LINKS</h5>
             <ul className="space-y-3">
-              {["About Us", "Shop All", "Aesthetics", "Performance", "Blog"].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                    {link}
-                  </a>
+              {[
+                { label: "About Us", path: "/#about" },
+                { label: "Shop All", path: "/shop" },
+                { label: "Aesthetics", path: "/shop?type=Aesthetics" },
+                { label: "Performance", path: "/shop?type=Performance" },
+                { label: "Blog", path: "/#blog" }
+              ].map((link) => (
+                <li key={link.label}>
+                  <Link to={link.path} className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -98,11 +103,6 @@ export const Footer = () => {
                   Shipping Policy
                 </Link>
               </li>
-              <li>
-                <Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Admin Login
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -122,7 +122,9 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground text-sm">therevvault@gmail.com</span>
+                <a href="mailto:therevvault@gmail.com" className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                  therevvault@gmail.com
+                </a>
               </li>
             </ul>
           </div>

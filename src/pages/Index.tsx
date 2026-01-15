@@ -28,7 +28,7 @@ const Index = () => {
     const handleOAuthCallback = async () => {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get('access_token');
-      
+
       if (accessToken) {
         console.log('OAuth callback detected, setting session...');
         await supabase.auth.setSession({
@@ -39,70 +39,60 @@ const Index = () => {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
     };
-    
+
     handleOAuthCallback();
-
-    // Handle auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Index auth state:', event, session?.user?.email);
-      if (event === 'SIGNED_IN' && session) {
-        toast.success('Successfully signed in!');
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   return (
     <div className="min-h-screen bg-background">
       <LoadingScreen onLoadingComplete={() => setIsLoading(false)} minDuration={1500} />
-      
+
       <PageTransition className={isLoading ? 'pointer-events-none' : ''}>
         <Navbar />
         <main>
           {/* 1. Hero Banner/Video */}
           <HeroSection />
-          
+
           {/* 2. Search Filter */}
           <SectionReveal>
             <VehicleSelector />
           </SectionReveal>
-          
+
           {/* 3. Brands Scrolling */}
           <SectionReveal delay={0.1}>
             <BrandCarousel />
           </SectionReveal>
-          
+
           {/* 4. Shop by Categories */}
           <SectionReveal delay={0.1}>
             <ShopByCategories />
           </SectionReveal>
-          
+
           {/* 5. Blogs - "Fuel Your Passion" */}
           <SectionReveal>
             <BlogSection />
           </SectionReveal>
-          
+
           {/* 6. Why Us (no heading) */}
           <SectionReveal>
             <WhyChooseUs />
           </SectionReveal>
-          
+
           {/* 7. Exclusive Offers/Sales */}
           <SectionReveal>
             <OffersSection />
           </SectionReveal>
-          
+
           {/* 8. How can we assist you today (Contact Us) */}
           <SectionReveal>
             <ContactSection />
           </SectionReveal>
-          
+
           {/* 9. Testimonials */}
           <SectionReveal>
             <Testimonials />
           </SectionReveal>
-          
+
           {/* 10. Instagram Feed */}
           <SectionReveal>
             <InstagramFeed />
@@ -111,7 +101,7 @@ const Index = () => {
         <Footer />
         <RotatingLogo />
         <ScrollToTop />
-        
+
         {/* Popups */}
         <LoginPromptPopup />
         <GaragePromptPopup />
