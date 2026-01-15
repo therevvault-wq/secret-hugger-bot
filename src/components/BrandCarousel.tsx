@@ -36,7 +36,7 @@ export const BrandCarousel = () => {
               <img
                 src={brand.logo}
                 alt={brand.name}
-                className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                className="max-w-full max-h-14 object-contain transition-all duration-300 transform group-hover:scale-110"
               />
             </div>
           ))}
