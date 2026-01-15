@@ -75,13 +75,13 @@ export default function InstagramManager() {
             const filePath = `${fileName}`;
 
             const { error: uploadError } = await supabase.storage
-                .from('instagram-thumbnails')
+                .from('product-images')
                 .upload(filePath, thumbnailFile);
 
             if (uploadError) throw uploadError;
 
             const { data: { publicUrl } } = supabase.storage
-                .from('instagram-thumbnails')
+                .from('product-images')
                 .getPublicUrl(filePath);
 
             // 2. Insert Post
@@ -127,7 +127,7 @@ export default function InstagramManager() {
             const fileName = thumbnailUrl.split('/').pop();
             if (fileName) {
                 await supabase.storage
-                    .from('instagram-thumbnails')
+                    .from('product-images')
                     .remove([fileName]);
             }
 
