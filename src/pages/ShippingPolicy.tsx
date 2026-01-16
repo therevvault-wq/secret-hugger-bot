@@ -65,7 +65,7 @@ export default function ShippingPolicy() {
                         <section>
                             <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase">4. Order Tracking</h2>
                             <p>
-                                Once your order is dispatched, you will receive an AWB / Tracking Number via email, SMS, or WhatsApp.
+                                Once your order is dispatched, you will receive an AWB / Tracking Number via email.
                             </p>
                             <p className="mt-2">
                                 You can track your order using the provided tracking details.

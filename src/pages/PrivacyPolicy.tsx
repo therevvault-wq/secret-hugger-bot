@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
                                     <h3 className="text-foreground font-semibold mb-2 flex items-center gap-2">
                                         <span>B. Payment Information</span>
                                     </h3>
-                                    <p>Payments on our website may be made via Credit/Debit Cards, UPI, Net Banking, COD, and other supported methods.</p>
+                                    <p>Payments on our website may be made via Credit/Debit Cards, UPI, Net Banking, and other supported methods.</p>
                                     <p className="mt-3 text-sm flex items-center gap-2">
                                         <span className="text-lg">⚠️</span>
                                         <span className="font-semibold text-foreground italic">Important: We do not store your card or banking details. All payments are securely processed by trusted third-party payment gateways.</span>
@@ -163,7 +163,7 @@ export default function PrivacyPolicy() {
                         </section>
 
                         <section>
-                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase text-sm tracking-widest text-muted-foreground/60">10. Children’s Privacy</h2>
+                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">10. Children’s Privacy</h2>
                             <p>
                                 Our Services are not intended for individuals under 18 years of age.
                                 We do not knowingly collect personal information from minors.

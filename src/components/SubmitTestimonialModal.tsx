@@ -24,26 +24,26 @@ export const SubmitTestimonialModal = () => {
   const [authorTitle, setAuthorTitle] = useState('');
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(5);
-  
+
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error('Please sign in to submit a testimonial');
       navigate('/auth');
       return;
     }
-    
+
     if (!authorName.trim() || !content.trim()) {
       toast.error('Please fill in all required fields');
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const { error } = await supabase.from('testimonials').insert({
         user_id: user.id,
@@ -52,13 +52,13 @@ export const SubmitTestimonialModal = () => {
         content: content.trim(),
         rating,
       });
-      
+
       if (error) throw error;
-      
+
       toast.success('Thank you for your time!', {
         description: 'Thank you for sharing your experience with us! Your feedback helps us improve',
       });
-      
+
       // Reset form
       setAuthorName('');
       setAuthorTitle('');
@@ -91,7 +91,7 @@ export const SubmitTestimonialModal = () => {
           Write a Review
         </Button>
       </DialogTrigger>
-      
+
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">Share Your Experience</DialogTitle>
@@ -99,7 +99,7 @@ export const SubmitTestimonialModal = () => {
             Tell us about your experience with TheRevVault. Your feedback helps us improve!
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
             <Label htmlFor="authorName">Your Name *</Label>
@@ -107,23 +107,23 @@ export const SubmitTestimonialModal = () => {
               id="authorName"
               value={authorName}
               onChange={(e) => setAuthorName(e.target.value)}
-              placeholder="John Doe"
+              placeholder="Example: John Doe"
               className="bg-secondary/50"
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="authorTitle">Your Car / Title</Label>
             <Input
               id="authorTitle"
               value={authorTitle}
               onChange={(e) => setAuthorTitle(e.target.value)}
-              placeholder="BMW M4 Owner, Mumbai"
+              placeholder="Example: BMW M4 Owner, Mumbai"
               className="bg-secondary/50"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label>Rating *</Label>
             <div className="flex gap-1">
@@ -135,29 +135,28 @@ export const SubmitTestimonialModal = () => {
                   className="p-1 hover:scale-110 transition-transform"
                 >
                   <Star
-                    className={`w-6 h-6 ${
-                      star <= rating
+                    className={`w-6 h-6 ${star <= rating
                         ? 'fill-primary text-primary'
                         : 'text-muted-foreground'
-                    }`}
+                      }`}
                   />
                 </button>
               ))}
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="content">Your Review *</Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Share your experience with our products and service..."
+              placeholder="Example: Share your experience with our products and service..."
               className="bg-secondary/50 min-h-[120px]"
               required
             />
           </div>
-          
+
           <Button type="submit" className="w-full btn-primary" disabled={loading}>
             {loading ? (
               <>

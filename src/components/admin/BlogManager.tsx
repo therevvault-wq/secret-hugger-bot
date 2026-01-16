@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2, Edit, Eye, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Plus, Trash2, Edit, Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import {
@@ -250,7 +250,7 @@ export default function BlogManager() {
                 <img
                   src={blog.featured_image_url}
                   alt={blog.title}
-                  className="w-24 h-24 object-cover rounded-lg"
+                  className="w-20 h-20 object-cover rounded-lg"
                 />
               )}
               <div className="flex-1">
@@ -276,7 +276,7 @@ export default function BlogManager() {
                   variant="outline"
                   onClick={() => togglePublish(blog)}
                 >
-                  <Eye className="w-4 h-4" />
+                  {blog.is_published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </Button>
                 <Button
                   size="sm"
@@ -342,11 +342,11 @@ export default function BlogManager() {
             </div>
 
             <div>
-              <Label>Excerpt</Label>
+              <Label>Quick Preview</Label>
               <Textarea
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                placeholder="Short description for preview"
+                placeholder="Brief description shown in blog listings"
                 rows={2}
               />
             </div>
@@ -364,7 +364,7 @@ export default function BlogManager() {
                       [{ 'header': [1, 2, 3, false] }],
                       ['bold', 'italic', 'underline', 'strike'],
                       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                      ['link', 'blockquote', 'code-block'],
+                      ['link', 'image', 'blockquote', 'code-block'],
                       ['clean']
                     ],
                   }}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, Package, ShoppingCart } from 'lucide-react';
+import { Loader2, Package, ShoppingCart, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Product {
@@ -19,6 +19,7 @@ interface Product {
   image_url: string | null;
   category: string | null;
   is_active: boolean | null;
+  compatible_vehicles: string | null;
 }
 
 export default function Shop() {
@@ -26,6 +27,7 @@ export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const make = searchParams.get('make');
   const model = searchParams.get('model');
@@ -49,7 +51,7 @@ export default function Shop() {
         .order('sort_order', { ascending: true });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data as unknown as Product[]) || []);
     } catch (error: any) {
       toast.error('Failed to fetch products', {
         description: error.message,
@@ -67,10 +69,23 @@ export default function Shop() {
     }).format(price);
   };
 
+  // Filter products based on vehicle compatibility
+  const filteredProducts = (make || model) ? products.filter(product => {
+    // If product has no compatible_vehicles, it's universal (show for all)
+    if (!product.compatible_vehicles) return true;
+
+    const compatibleList = product.compatible_vehicles.toLowerCase();
+    // Check if selected make or model is in the compatible vehicles list
+    if (model && compatibleList.includes(model.toLowerCase())) return true;
+    if (make && compatibleList.includes(make.toLowerCase())) return true;
+
+    return false;
+  }) : products;
+
   // Group products by category
-  const aestheticsProducts = products.filter(p => p.category?.toLowerCase() === 'aesthetics' || p.category?.toLowerCase() === 'body kits' || p.category?.toLowerCase() === 'spoilers & wings');
-  const performanceProducts = products.filter(p => p.category?.toLowerCase() === 'performance' || p.category?.toLowerCase() === 'air intakes' || p.category?.toLowerCase() === 'exhaust systems');
-  const otherProducts = products.filter(p => {
+  const aestheticsProducts = filteredProducts.filter(p => p.category?.toLowerCase() === 'aesthetics' || p.category?.toLowerCase() === 'body kits' || p.category?.toLowerCase() === 'spoilers & wings');
+  const performanceProducts = filteredProducts.filter(p => p.category?.toLowerCase() === 'performance' || p.category?.toLowerCase() === 'air intakes' || p.category?.toLowerCase() === 'exhaust systems');
+  const otherProducts = filteredProducts.filter(p => {
     const cat = p.category?.toLowerCase();
     return !cat || (cat !== 'aesthetics' && cat !== 'performance' && cat !== 'body kits' && cat !== 'spoilers & wings' && cat !== 'air intakes' && cat !== 'exhaust systems');
   });
@@ -140,11 +155,20 @@ export default function Shop() {
             Products for Your Vehicle
           </h1>
           {(make || model || year || fuelType) && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-4 items-center">
               {make && <Badge variant="secondary" className="text-sm">{make}</Badge>}
               {model && <Badge variant="secondary" className="text-sm">{model}</Badge>}
               {year && <Badge variant="secondary" className="text-sm">{year}</Badge>}
               {fuelType && <Badge variant="secondary" className="text-sm">{fuelType}</Badge>}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/shop')}
+                className="ml-2"
+              >
+                <X className="w-3 h-3 mr-1" />
+                Clear Filters
+              </Button>
             </div>
           )}
         </div>

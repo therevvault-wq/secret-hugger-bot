@@ -30,6 +30,8 @@ interface Product {
   is_active: boolean;
   sort_order: number;
   created_at: string;
+  delivery_timeline: string | null;
+  compatible_vehicles: string | null;
 }
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
@@ -67,6 +69,8 @@ export default function ProductsManager() {
     product_type: '',
     is_active: true,
     sort_order: 0,
+    delivery_timeline: '',
+    compatible_vehicles: '',
   });
 
   // Form persistence
@@ -182,6 +186,8 @@ export default function ProductsManager() {
       product_type: '',
       is_active: true,
       sort_order: products.length,
+      delivery_timeline: '',
+      compatible_vehicles: '',
     });
     setDialogOpen(true);
   };
@@ -199,6 +205,8 @@ export default function ProductsManager() {
       product_type: product.product_type || '',
       is_active: product.is_active ?? true,
       sort_order: product.sort_order ?? 0,
+      delivery_timeline: product.delivery_timeline || '',
+      compatible_vehicles: product.compatible_vehicles || '',
     });
     setDialogOpen(true);
   };
@@ -542,6 +550,26 @@ export default function ProductsManager() {
                   setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })
                 }
               />
+            </div>
+
+            <div>
+              <Label>Delivery Timeline</Label>
+              <Input
+                value={formData.delivery_timeline}
+                onChange={(e) => setFormData({ ...formData, delivery_timeline: e.target.value })}
+                placeholder="Example: 7-14 business days"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Shown on product page</p>
+            </div>
+
+            <div>
+              <Label>Compatible Vehicles</Label>
+              <Input
+                value={formData.compatible_vehicles}
+                onChange={(e) => setFormData({ ...formData, compatible_vehicles: e.target.value })}
+                placeholder="Example: VW Virtus, Skoda Slavia"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Comma-separated list. Leave empty for universal fit.</p>
             </div>
 
             <div className="flex items-center gap-2">

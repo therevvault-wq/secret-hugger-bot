@@ -163,7 +163,27 @@ export default function TermsOfService() {
                         </section>
 
                         <section>
-                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">Section 18 – Governing Law</h2>
+                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">Section 16 – Entire Agreement</h2>
+                            <p>These Terms, together with our Privacy Policy, Return & Refund Policy, and any other policies referenced herein, constitute the entire agreement between you and THEREVVAULT regarding your use of our Services. Any prior agreements or understandings are superseded by these Terms.</p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">Section 17 – Waiver</h2>
+                            <p>Our failure to enforce any right or provision of these Terms shall not be considered a waiver of such right or provision. The waiver of any such right or provision will be effective only if in writing and signed by an authorized representative of THEREVVAULT.</p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">Section 18 – Severability</h2>
+                            <p>If any provision of these Terms is held to be invalid or unenforceable, the remaining provisions shall continue in full force and effect. The invalid or unenforceable provision shall be modified to the minimum extent necessary to make it valid and enforceable.</p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">Section 19 – Assignment</h2>
+                            <p>You may not assign or transfer your rights or obligations under these Terms without our prior written consent. THEREVVAULT may assign or transfer its rights and obligations without restriction.</p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">Section 20 – Governing Law</h2>
                             <p>
                                 These Terms shall be governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts of Delhi, India.
                             </p>

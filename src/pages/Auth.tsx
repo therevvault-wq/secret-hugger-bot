@@ -175,7 +175,7 @@ export default function Auth() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
-      <main className="flex-1 flex items-center justify-center pt-32 pb-20 px-4">
+      <main className="flex-1 flex items-center justify-center pt-36 pb-20 px-4">
         <div className="w-full max-w-md">
           <div className="bg-card border border-border rounded-2xl p-8">
             <div className="text-center mb-8">
@@ -264,7 +264,7 @@ export default function Auth() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="therevvault@gmail.com"
+                    placeholder="Enter your email"
                     className="bg-secondary/50"
                   />
                   {errors.email && (
