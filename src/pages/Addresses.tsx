@@ -63,7 +63,7 @@ export default function Addresses() {
   const fetchAddresses = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('user_addresses')
         .select('*')
         .order('is_default', { ascending: false })
@@ -121,7 +121,7 @@ export default function Addresses() {
 
       // If setting as default, unset others first
       if (formData.is_default && addresses.length > 0) {
-        await supabase
+        await (supabase as any)
           .from('user_addresses')
           .update({ is_default: false })
           .eq('user_id', user.id);
@@ -129,18 +129,19 @@ export default function Addresses() {
 
       const addressData = {
         ...formData,
+        phone_number: formData.phone_number || null,
         user_id: user.id,
       };
 
       if (editingId) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('user_addresses')
           .update(addressData)
           .eq('id', editingId);
         if (error) throw error;
         toast.success('Address updated');
       } else {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('user_addresses')
           .insert(addressData);
         if (error) throw error;
@@ -160,7 +161,7 @@ export default function Addresses() {
     if (!confirm('Are you sure you want to delete this address?')) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('user_addresses')
         .delete()
         .eq('id', id);

@@ -16,7 +16,7 @@ export const RotatingLogo = () => {
         initial={{ opacity: 0, scale: 0.8, x: 10 }}
         animate={{ opacity: 1, scale: 1, x: 0 }}
         transition={{ delay: 1.5, duration: 0.5 }}
-        className="bg-background border border-primary/20 px-4 py-2 rounded-2xl shadow-xl hidden md:block"
+        className="bg-background border border-primary/20 px-4 py-2 rounded-2xl shadow-xl"
       >
         <p className="text-sm font-medium text-foreground whitespace-nowrap">
           Hi, need any assistance?

@@ -107,7 +107,7 @@ export const SubmitTestimonialModal = () => {
               id="authorName"
               value={authorName}
               onChange={(e) => setAuthorName(e.target.value)}
-              placeholder="Example: John Doe"
+              placeholder="John Doe"
               className="bg-secondary/50"
               required
             />
@@ -119,7 +119,7 @@ export const SubmitTestimonialModal = () => {
               id="authorTitle"
               value={authorTitle}
               onChange={(e) => setAuthorTitle(e.target.value)}
-              placeholder="Example: BMW M4 Owner, Mumbai"
+              placeholder="BMW M4 Owner, Mumbai"
               className="bg-secondary/50"
             />
           </div>
@@ -136,8 +136,8 @@ export const SubmitTestimonialModal = () => {
                 >
                   <Star
                     className={`w-6 h-6 ${star <= rating
-                        ? 'fill-primary text-primary'
-                        : 'text-muted-foreground'
+                      ? 'fill-primary text-primary'
+                      : 'text-muted-foreground'
                       }`}
                   />
                 </button>
@@ -151,7 +151,7 @@ export const SubmitTestimonialModal = () => {
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Example: Share your experience with our products and service..."
+              placeholder="Share your experience with our products and service..."
               className="bg-secondary/50 min-h-[120px]"
               required
             />

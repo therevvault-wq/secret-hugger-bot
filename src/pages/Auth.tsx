@@ -46,7 +46,7 @@ export default function Auth() {
           return;
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -59,6 +59,20 @@ export default function Auth() {
         if (error) {
           toast.error(error.message);
         } else {
+          // Manual profile creation as fail-safe
+          if (data?.user) {
+            const { error: profileError } = await supabase.from('profiles').insert({
+              id: data.user.id,
+              full_name: fullName,
+              email: email,
+              role: 'customer' // Default role
+            });
+
+            if (profileError) {
+              console.error("Manual profile creation failed:", profileError);
+            }
+          }
+
           toast.success('Account created! You can now sign in.');
           setIsSignUp(false);
         }
@@ -199,19 +213,6 @@ export default function Auth() {
                 }}
               >
                 Email
-              </Button>
-              <Button
-                type="button"
-                variant={authMethod === 'phone' ? 'default' : 'outline'}
-                className="flex-1"
-                onClick={() => {
-                  setAuthMethod('phone');
-                  setOtpSent(false);
-                  setOtp('');
-                }}
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                WhatsApp
               </Button>
               <Button
                 type="button"

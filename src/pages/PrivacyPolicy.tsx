@@ -107,7 +107,7 @@ export default function PrivacyPolicy() {
                         </section>
 
                         <section>
-                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase text-primary/80 tracking-tight">5. Sharing of Information</h2>
+                            <h2 className="text-2xl font-display text-foreground mt-8 mb-4 uppercase tracking-tight">5. Sharing of Information</h2>
                             <p>We may share your information only when necessary, including with:</p>
                             <ul className="list-disc pl-6 space-y-1 mt-2">
                                 <li>Payment processors (to complete transactions)</li>

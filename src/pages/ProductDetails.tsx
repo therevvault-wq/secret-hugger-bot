@@ -21,6 +21,7 @@ interface Product {
     category: string | null;
     product_type: string | null;
     is_active: boolean;
+    delivery_timeline: string | null;
 }
 
 export default function ProductDetails() {
@@ -190,6 +191,9 @@ export default function ProductDetails() {
                             <p className="text-sm text-muted-foreground flex items-center gap-2">
                                 <Check className="w-4 h-4 text-green-500" />
                                 In stock and ready to ship
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-2">
+                                <strong>Delivery:</strong> {(product as any).delivery_timeline || 'Standard Delivery: 5-7 Business Days (refer to Shipping Policy for details)'}
                             </p>
                         </div>
                     </div>

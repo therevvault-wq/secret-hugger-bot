@@ -62,33 +62,61 @@ export const OffersSection = () => {
 
         <div className={`grid gap-6 ${offers.length === 1 ? 'md:grid-cols-1 max-w-2xl mx-auto' : 'md:grid-cols-2'}`}>
           {offers.map((offer) => (
-            <Link
-              key={offer.id}
-              to={offer.link || "/shop"}
-              className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
-            >
-              <div className="aspect-[16/9] relative">
-                <img
-                  src={offer.image_url}
-                  alt={offer.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                <div className="absolute inset-0 flex items-end justify-center p-6">
-                  <div className="text-center">
-                    {offer.subtitle && (
-                      <span className="text-primary font-bold text-sm uppercase tracking-wider">
-                        {offer.subtitle}
-                      </span>
-                    )}
-                    <h3 className="text-xl md:text-2xl font-display font-bold text-white mt-1">
-                      {offer.title}
-                    </h3>
+            offer.link ? (
+              <Link
+                key={offer.id}
+                to={offer.link}
+                className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300 cursor-pointer"
+              >
+                <div className="aspect-[16/9] relative">
+                  <img
+                    src={offer.image_url}
+                    alt={offer.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 flex items-end justify-center p-6">
+                    <div className="text-center">
+                      {offer.subtitle && (
+                        <span className="text-primary font-bold text-sm uppercase tracking-wider">
+                          {offer.subtitle}
+                        </span>
+                      )}
+                      <h3 className="text-xl md:text-2xl font-display font-bold text-white mt-1">
+                        {offer.title}
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </Link>
+            ) : (
+              <div
+                key={offer.id}
+                className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 cursor-default"
+              >
+                <div className="aspect-[16/9] relative">
+                  <img
+                    src={offer.image_url}
+                    alt={offer.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 flex items-end justify-center p-6">
+                    <div className="text-center">
+                      {offer.subtitle && (
+                        <span className="text-primary font-bold text-sm uppercase tracking-wider">
+                          {offer.subtitle}
+                        </span>
+                      )}
+                      <h3 className="text-xl md:text-2xl font-display font-bold text-white mt-1">
+                        {offer.title}
+                      </h3>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </Link>
+            )
           ))}
         </div>
       </div>

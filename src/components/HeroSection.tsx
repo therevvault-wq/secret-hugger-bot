@@ -78,7 +78,11 @@ export const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-wrap gap-3 md:gap-4"
           >
-            <Button size="lg" className="btn-primary text-sm sm:text-base px-6 sm:px-8 group">
+            <Button
+              size="lg"
+              className="btn-primary text-sm sm:text-base px-6 sm:px-8 group"
+              onClick={() => window.location.href = '/shop'}
+            >
               Shop Now
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>

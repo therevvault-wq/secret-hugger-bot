@@ -1,32 +1,57 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
-const blogs = [
-  {
-    title: "Top 5 Exhaust Upgrades That Transform Your Ride",
-    excerpt: "Discover the best exhaust systems that boost performance and give your car that aggressive sound.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
-    readTime: "5 min read",
-    slug: "exhaust-upgrades",
-  },
-  {
-    title: "Body Kit Installation: What You Need to Know",
-    excerpt: "A complete guide to choosing and installing the perfect body kit for your vehicle.",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=600&h=400&fit=crop",
-    readTime: "7 min read",
-    slug: "body-kit-installation",
-  },
-  {
-    title: "Turbo vs Supercharger: Which is Right for You?",
-    excerpt: "Breaking down the pros and cons of forced induction systems for your build.",
-    image: "https://images.unsplash.com/photo-1619405399517-d7fce0f13302?w=600&h=400&fit=crop",
-    readTime: "6 min read",
-    slug: "turbo-vs-supercharger",
-  },
-];
+interface Blog {
+  id: string;
+  title: string;
+  excerpt: string;
+  featured_image_url: string;
+  slug: string;
+}
 
 export const BlogSection = () => {
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("blogs")
+          .select("id, title, excerpt, featured_image_url, slug")
+          .eq("is_published", true)
+          .order("created_at", { ascending: false })
+          .limit(3);
+
+        if (error) throw error;
+        setBlogs(data || []);
+      } catch (error) {
+        console.error("Failed to fetch blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="section-padding bg-secondary/20">
+        <div className="container-rev flex justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </section>
+    );
+  }
+
+  if (blogs.length === 0) {
+    return null;
+  }
+
   return (
     <section className="section-padding bg-secondary/20">
       <div className="container-rev">
@@ -45,13 +70,13 @@ export const BlogSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {blogs.map((blog) => (
             <Link
-              key={blog.slug}
+              key={blog.id}
               to={`/blog/${blog.slug}`}
               className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
             >
               <div className="aspect-video overflow-hidden">
                 <img
-                  src={blog.image}
+                  src={blog.featured_image_url}
                   alt={blog.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -59,7 +84,7 @@ export const BlogSection = () => {
               <div className="p-6">
                 <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
                   <Clock className="w-4 h-4" />
-                  <span>{blog.readTime}</span>
+                  <span>5 min read</span>
                 </div>
                 <h3 className="font-display text-xl text-foreground mb-2 group-hover:text-primary transition-colors">
                   {blog.title}

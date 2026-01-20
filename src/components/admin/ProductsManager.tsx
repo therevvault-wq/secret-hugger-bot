@@ -230,6 +230,8 @@ export default function ProductsManager() {
         product_type: formData.product_type || null,
         is_active: formData.is_active,
         sort_order: formData.sort_order,
+        delivery_timeline: formData.delivery_timeline || null,
+        compatible_vehicles: formData.compatible_vehicles || null,
       };
 
       if (editingProduct) {
