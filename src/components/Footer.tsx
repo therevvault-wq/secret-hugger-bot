@@ -19,6 +19,7 @@ export const Footer = () => {
 
     setIsSubscribing(true);
     try {
+      // First save to database
       const { error } = await (supabase as any)
         .from("newsletter_subscribers")
         .insert([{ email }]);
@@ -30,6 +31,16 @@ export const Footer = () => {
           throw error;
         }
       } else {
+        // Send welcome email via Edge Function
+        try {
+          await supabase.functions.invoke('send-welcome-email', {
+            body: { email }
+          });
+        } catch (emailError) {
+          console.error("Failed to send welcome email:", emailError);
+          // Don't fail the subscription if email fails
+        }
+
         toast.success("Welcome to the Vault! You've successfully subscribed.");
         setEmail("");
       }
