@@ -10,6 +10,7 @@ interface Blog {
   excerpt: string;
   featured_image_url: string;
   slug: string;
+  read_time?: string | null;
 }
 
 export const BlogSection = () => {
@@ -21,13 +22,13 @@ export const BlogSection = () => {
       try {
         const { data, error } = await supabase
           .from("blogs")
-          .select("id, title, excerpt, featured_image_url, slug")
+          .select("id, title, excerpt, featured_image_url, slug, read_time")
           .eq("is_published", true)
           .order("created_at", { ascending: false })
           .limit(3);
 
         if (error) throw error;
-        setBlogs(data || []);
+        setBlogs((data as any) || []);
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       } finally {
@@ -82,10 +83,12 @@ export const BlogSection = () => {
                 />
               </div>
               <div className="p-6">
-                <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
-                  <Clock className="w-4 h-4" />
-                  <span>5 min read</span>
-                </div>
+                {blog.read_time && (
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
+                    <Clock className="w-4 h-4" />
+                    <span>{blog.read_time}</span>
+                  </div>
+                )}
                 <h3 className="font-display text-xl text-foreground mb-2 group-hover:text-primary transition-colors">
                   {blog.title}
                 </h3>

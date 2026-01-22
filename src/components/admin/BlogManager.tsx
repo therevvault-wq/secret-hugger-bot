@@ -26,6 +26,7 @@ interface Blog {
   featured_image_url: string | null;
   is_published: boolean;
   created_at: string;
+  read_time: string | null;
 }
 
 export default function BlogManager() {
@@ -43,6 +44,7 @@ export default function BlogManager() {
     content: '',
     featured_image_url: '',
     is_published: false,
+    read_time: '',
   });
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function BlogManager() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBlogs(data || []);
+      setBlogs((data as any) || []);
     } catch (error: any) {
       toast.error('Failed to fetch blogs');
     } finally {
@@ -125,6 +127,7 @@ export default function BlogManager() {
       content: '',
       featured_image_url: '',
       is_published: false,
+      read_time: '',
     });
     setDialogOpen(true);
   };
@@ -138,6 +141,7 @@ export default function BlogManager() {
       content: blog.content,
       featured_image_url: blog.featured_image_url || '',
       is_published: blog.is_published ?? false,
+      read_time: (blog as any).read_time || '',
     });
     setDialogOpen(true);
   };
@@ -161,6 +165,7 @@ export default function BlogManager() {
         featured_image_url: formData.featured_image_url || null,
         is_published: formData.is_published,
         author_id: user.id,
+        read_time: formData.read_time || null,
       };
 
       if (editingBlog) {
@@ -348,6 +353,15 @@ export default function BlogManager() {
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 placeholder="Brief description shown in blog listings"
                 rows={2}
+              />
+            </div>
+
+            <div>
+              <Label>Read Time (e.g. "5 min read")</Label>
+              <Input
+                value={formData.read_time}
+                onChange={(e) => setFormData({ ...formData, read_time: e.target.value })}
+                placeholder="Leave empty to hide"
               />
             </div>
 
