@@ -294,6 +294,51 @@ export const Navbar = () => {
                 className="lg:hidden py-6 border-t border-border overflow-hidden max-h-[calc(100vh-7rem)] overflow-y-auto"
               >
                 <div className="flex flex-col gap-4 pb-4">
+                  {/* Search and Login at top */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 }}
+                    className="flex items-center gap-3 pb-4 border-b border-border"
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        setSearchOpen(true);
+                        setIsOpen(false);
+                      }}
+                    >
+                      <Search className="w-4 h-4 mr-2" />
+                      Search
+                    </Button>
+                    {user ? (
+                      <>
+                        {isAdmin && (
+                          <Link to="/admin" className="flex-1" onClick={() => setIsOpen(false)}>
+                            <Button variant="outline" size="sm" className="w-full">Admin</Button>
+                          </Link>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            handleSignOut();
+                            setIsOpen(false);
+                          }}
+                          className="flex-1"
+                        >
+                          Sign Out
+                        </Button>
+                      </>
+                    ) : (
+                      <Link to="/auth" className="flex-1" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" size="sm" className="w-full">Login</Button>
+                      </Link>
+                    )}
+                  </motion.div>
+
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
                     <Link to="/" className="text-foreground font-medium py-2 block" onClick={() => setIsOpen(false)}>Home</Link>
                   </motion.div>
@@ -328,47 +373,6 @@ export const Navbar = () => {
                   </motion.div>
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
                     <Link to="/blog" className="text-foreground font-medium py-2 block" onClick={() => setIsOpen(false)}>Blog</Link>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex items-center gap-4 pt-4 border-t border-border"
-                  >
-                    {user ? (
-                      <>
-                        {isAdmin && (
-                          <Link to="/admin" className="flex-1" onClick={() => setIsOpen(false)}>
-                            <Button variant="outline" size="sm" className="w-full">Admin</Button>
-                          </Link>
-                        )}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            handleSignOut();
-                            setIsOpen(false);
-                          }}
-                          className="flex-1"
-                        >
-                          Sign Out
-                        </Button>
-                      </>
-                    ) : (
-                      <Link to="/auth" className="flex-1" onClick={() => setIsOpen(false)}>
-                        <Button variant="outline" size="sm" className="w-full">Login</Button>
-                      </Link>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setIsOpen(false);
-                        setSearchOpen(true);
-                      }}
-                    >
-                      <Search className="w-5 h-5" />
-                    </Button>
                   </motion.div>
                 </div>
               </motion.div>
