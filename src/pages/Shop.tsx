@@ -135,11 +135,11 @@ export default function Shop() {
     <Card key={product.id} className="border-border hover:border-primary/50 transition-all overflow-hidden group flex flex-col h-full">
       <Link to={`/product/${product.id}`} className="block flex-1">
         {product.image_url && (
-          <div className="aspect-square overflow-hidden bg-secondary relative">
+          <div className="aspect-square overflow-hidden bg-white relative">
             <img
               src={product.image_url}
               alt={product.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
             />
             {product.compare_at_price && product.compare_at_price > product.price && (
               <Badge className="absolute top-2 right-2 bg-destructive text-white border-none">
