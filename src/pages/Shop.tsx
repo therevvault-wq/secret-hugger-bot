@@ -193,10 +193,11 @@ export default function Shop() {
       <div className="container-rev pt-32 pb-20">
         <div className="mb-8">
           <h1 className="font-display text-4xl md:text-5xl mb-4">
-            Products for Your Vehicle
+            {categoryFilter ? categoryFilter : 'Products for Your Vehicle'}
           </h1>
-          {(make || model || year || fuelType) && (
+          {(make || model || year || fuelType || categoryFilter) && (
             <div className="flex flex-wrap gap-2 mb-4 items-center">
+              {categoryFilter && <Badge variant="default" className="text-sm bg-primary">{categoryFilter}</Badge>}
               {make && <Badge variant="secondary" className="text-sm">{make}</Badge>}
               {model && <Badge variant="secondary" className="text-sm">{model}</Badge>}
               {year && <Badge variant="secondary" className="text-sm">{year}</Badge>}
@@ -228,6 +229,28 @@ export default function Shop() {
               </p>
             </CardContent>
           </Card>
+        ) : categoryFilteredProducts ? (
+          // Show only category-filtered products
+          <div className="space-y-8">
+            {categoryFilteredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categoryFilteredProducts.map(renderProductCard)}
+              </div>
+            ) : (
+              <Card className="border-border">
+                <CardContent className="flex flex-col items-center justify-center py-16">
+                  <Package className="w-16 h-16 text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No Products Found</h3>
+                  <p className="text-muted-foreground text-center max-w-md">
+                    No products found in the "{categoryFilter}" category. Try browsing all products.
+                  </p>
+                  <Button onClick={() => navigate('/shop')} className="mt-4">
+                    View All Products
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         ) : (
           <div className="space-y-16">
             {/* Aesthetics Section */}
