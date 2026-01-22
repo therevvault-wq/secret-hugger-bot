@@ -100,8 +100,26 @@ export default function Profile() {
     }
   };
 
+  const [deleting, setDeleting] = useState(false);
+
   const handleDeleteAccount = async () => {
-    toast.info('Account deletion request received. Please contact support at therevvault@gmail.com to complete this process.');
+    setDeleting(true);
+    try {
+      const { error } = await supabase.functions.invoke('delete-account');
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success('Account deleted successfully. You have been logged out.');
+      await signOut();
+      navigate('/');
+    } catch (error: any) {
+      console.error('Delete account error:', error);
+      toast.error('Failed to delete account. Please contact support at therevvault@gmail.com');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (!user) return null;
@@ -207,8 +225,13 @@ export default function Profile() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                      Delete Account
+                    <AlertDialogAction
+                      onClick={handleDeleteAccount}
+                      disabled={deleting}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {deleting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                      {deleting ? 'Deleting...' : 'Delete Account'}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
