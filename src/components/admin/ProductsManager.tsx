@@ -7,9 +7,10 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2, Edit, Package, X, Image as ImageIcon, Upload } from 'lucide-react';
+import { Loader2, Plus, Trash2, Edit, Package, X, Image as ImageIcon, Upload, ChevronDown } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { vehicleData, getMakes, getModels } from '@/data/vehicleData';
 import {
   Dialog,
   DialogContent,
@@ -566,12 +567,58 @@ export default function ProductsManager() {
 
             <div>
               <Label>Compatible Vehicles</Label>
-              <Input
-                value={formData.compatible_vehicles}
-                onChange={(e) => setFormData({ ...formData, compatible_vehicles: e.target.value })}
-                placeholder="Example: VW Virtus, Skoda Slavia"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">Comma-separated list. Leave empty for universal fit.</p>
+              <div className="flex gap-2 mt-1">
+                <Select
+                  onValueChange={(value) => {
+                    const current = formData.compatible_vehicles
+                      ? formData.compatible_vehicles.split(',').map(v => v.trim()).filter(Boolean)
+                      : [];
+                    if (!current.includes(value)) {
+                      setFormData({
+                        ...formData,
+                        compatible_vehicles: [...current, value].join(', ')
+                      });
+                    }
+                  }}
+                >
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Add vehicle..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {getMakes().map((make) => (
+                      <div key={make}>
+                        <SelectItem value={make} className="font-semibold text-primary">
+                          {make} (All models)
+                        </SelectItem>
+                        {getModels(make).map((model) => (
+                          <SelectItem key={`${make}-${model}`} value={model} className="pl-6">
+                            {model}
+                          </SelectItem>
+                        ))}
+                      </div>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {formData.compatible_vehicles && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {formData.compatible_vehicles.split(',').map((v, i) => (
+                    <Badge
+                      key={i}
+                      variant="secondary"
+                      className="cursor-pointer hover:bg-destructive hover:text-white"
+                      onClick={() => {
+                        const vehicles = formData.compatible_vehicles.split(',').map(veh => veh.trim()).filter(Boolean);
+                        vehicles.splice(i, 1);
+                        setFormData({ ...formData, compatible_vehicles: vehicles.join(', ') });
+                      }}
+                    >
+                      {v.trim()} <X className="w-3 h-3 ml-1" />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              <p className="text-[10px] text-muted-foreground mt-1">Click badge to remove. Leave empty for universal fit.</p>
             </div>
 
             <div className="flex items-center gap-2">
