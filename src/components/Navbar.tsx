@@ -99,15 +99,19 @@ export const Navbar = () => {
                       className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4"
                     >
                       {aestheticsItems.map((item, i) => (
-                        <motion.span
+                        <Link
                           key={item}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.15, delay: i * 0.03 }}
-                          className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors cursor-default"
+                          to={`/shop?category=${encodeURIComponent(item)}`}
+                          className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors"
                         >
-                          {item}
-                        </motion.span>
+                          <motion.span
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.15, delay: i * 0.03 }}
+                          >
+                            {item}
+                          </motion.span>
+                        </Link>
                       ))}
                     </motion.div>
                   </div>
@@ -133,15 +137,19 @@ export const Navbar = () => {
                       className="w-56 bg-card border border-border rounded-lg shadow-2xl p-4"
                     >
                       {performanceItems.map((item, i) => (
-                        <motion.span
+                        <Link
                           key={item}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.15, delay: i * 0.03 }}
-                          className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors cursor-default"
+                          to={`/shop?category=${encodeURIComponent(item)}`}
+                          className="block py-2 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors"
                         >
-                          {item}
-                        </motion.span>
+                          <motion.span
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.15, delay: i * 0.03 }}
+                          >
+                            {item}
+                          </motion.span>
+                        </Link>
                       ))}
                     </motion.div>
                   </div>
@@ -283,32 +291,36 @@ export const Navbar = () => {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="lg:hidden py-6 border-t border-border overflow-hidden"
+                className="lg:hidden py-6 border-t border-border overflow-hidden max-h-[calc(100vh-7rem)] overflow-y-auto"
               >
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 pb-4">
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
                     <Link to="/" className="text-foreground font-medium py-2 block" onClick={() => setIsOpen(false)}>Home</Link>
                   </motion.div>
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
                     <p className="text-primary font-medium mb-2">Aesthetics</p>
-                    {aestheticsItems.slice(0, 4).map((item, i) => (
-                      <span
+                    {aestheticsItems.map((item) => (
+                      <Link
                         key={item}
-                        className="block py-1.5 pl-4 text-muted-foreground"
+                        to={`/shop?category=${encodeURIComponent(item)}`}
+                        className="block py-1.5 pl-4 text-muted-foreground hover:text-foreground"
+                        onClick={() => setIsOpen(false)}
                       >
                         {item}
-                      </span>
+                      </Link>
                     ))}
                   </motion.div>
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
                     <p className="text-primary font-medium mb-2">Performance</p>
-                    {performanceItems.slice(0, 4).map((item, i) => (
-                      <span
+                    {performanceItems.map((item) => (
+                      <Link
                         key={item}
-                        className="block py-1.5 pl-4 text-muted-foreground"
+                        to={`/shop?category=${encodeURIComponent(item)}`}
+                        className="block py-1.5 pl-4 text-muted-foreground hover:text-foreground"
+                        onClick={() => setIsOpen(false)}
                       >
                         {item}
-                      </span>
+                      </Link>
                     ))}
                   </motion.div>
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}>

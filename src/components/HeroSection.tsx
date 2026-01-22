@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -6,6 +7,7 @@ import heroVideo from "@/assets/hero-video.mp4";
 
 export const HeroSection = () => {
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
@@ -81,7 +83,7 @@ export const HeroSection = () => {
             <Button
               size="lg"
               className="btn-primary text-sm sm:text-base px-6 sm:px-8 group"
-              onClick={() => window.location.href = '/shop'}
+              onClick={() => navigate('/shop')}
             >
               Shop Now
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform group-hover:translate-x-1" />

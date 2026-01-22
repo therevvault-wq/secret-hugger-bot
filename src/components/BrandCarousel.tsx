@@ -26,13 +26,27 @@ export const BrandCarousel = () => {
         </p>
       </div>
 
-      <div className="relative">
-        {/* Marquee Row */}
-        <div className="flex gap-16 animate-marquee">
-          {[...brands, ...brands].map((brand, i) => (
+      <div className="relative overflow-hidden">
+        {/* Marquee Container - infinite seamless loop */}
+        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+          {/* First set of brands */}
+          {brands.map((brand, i) => (
             <div
-              key={i}
-              className="flex-shrink-0 flex items-center justify-center px-8 py-6 bg-white border border-border/50 rounded-lg min-w-[180px] h-[100px] hover:border-primary/50 transition-colors group"
+              key={`first-${i}`}
+              className="flex-shrink-0 flex items-center justify-center px-8 py-6 mx-4 bg-white border border-border/50 rounded-lg min-w-[180px] h-[100px] hover:border-primary/50 transition-colors group"
+            >
+              <img
+                src={brand.logo}
+                alt={brand.name}
+                className="max-w-full max-h-14 object-contain transition-all duration-300 transform group-hover:scale-110"
+              />
+            </div>
+          ))}
+          {/* Duplicate set for seamless loop */}
+          {brands.map((brand, i) => (
+            <div
+              key={`second-${i}`}
+              className="flex-shrink-0 flex items-center justify-center px-8 py-6 mx-4 bg-white border border-border/50 rounded-lg min-w-[180px] h-[100px] hover:border-primary/50 transition-colors group"
             >
               <img
                 src={brand.logo}
@@ -44,8 +58,8 @@ export const BrandCarousel = () => {
         </div>
 
         {/* Gradient Overlays */}
-        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-background to-transparent pointer-events-none" />
-        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-background to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
       </div>
     </section>
   );

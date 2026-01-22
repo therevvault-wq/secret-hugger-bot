@@ -33,6 +33,7 @@ export default function Shop() {
   const model = searchParams.get('model');
   const year = searchParams.get('year');
   const fuelType = searchParams.get('fuelType');
+  const categoryFilter = searchParams.get('category');
 
   useEffect(() => {
     fetchProducts();
@@ -124,6 +125,11 @@ export default function Shop() {
     const cat = p.category?.toLowerCase();
     return !cat || (!aestheticsCategories.includes(cat) && !performanceCategories.includes(cat));
   });
+
+  // Apply category filter from URL if present
+  const categoryFilteredProducts = categoryFilter
+    ? filteredProducts.filter(p => p.category?.toLowerCase() === categoryFilter.toLowerCase())
+    : null;
 
   const renderProductCard = (product: Product) => (
     <Card key={product.id} className="border-border hover:border-primary/50 transition-all overflow-hidden group flex flex-col h-full">
