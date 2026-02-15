@@ -352,7 +352,7 @@ export default function MyGarage() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-2">
+                  <CardContent className="space-y-3">
                     {vehicle.nickname && (
                       <p className="text-sm font-medium text-foreground">{vehicle.nickname}</p>
                     )}
@@ -361,6 +361,12 @@ export default function MyGarage() {
                       <span>•</span>
                       <span>{vehicle.fuel_type}</span>
                     </div>
+                    <Button
+                      className="w-full btn-primary mt-2"
+                      onClick={() => navigate(`/shop?make=${encodeURIComponent(vehicle.make)}&model=${encodeURIComponent(vehicle.model)}&year=${vehicle.year}&fuelType=${encodeURIComponent(vehicle.fuel_type)}`)}
+                    >
+                      Shop for this Vehicle
+                    </Button>
                   </CardContent>
                 </Card>
               ))}

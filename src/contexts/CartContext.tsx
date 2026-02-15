@@ -7,6 +7,7 @@ export interface CartItem {
     price: number;
     image_url: string | null;
     quantity: number;
+    shipping_cost: number | null;
 }
 
 interface CartContextType {
@@ -17,6 +18,8 @@ interface CartContextType {
     clearCart: () => void;
     cartCount: number;
     cartTotal: number;
+    shippingTotal: number;
+    grandTotal: number;
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
 }
@@ -62,7 +65,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 title: product.title,
                 price: product.price,
                 image_url: product.image_url,
-                quantity: 1
+                quantity: 1,
+                shipping_cost: product.shipping_cost || null
             }];
         });
     };
@@ -89,6 +93,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const cartTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    // Shipping cost is per item (not multiplied by quantity as shipping is typically per order/item type)
+    const shippingTotal = items.reduce((sum, item) => sum + (item.shipping_cost || 0), 0);
+    const grandTotal = cartTotal + shippingTotal;
 
     return (
         <CartContext.Provider
@@ -100,6 +107,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 clearCart,
                 cartCount,
                 cartTotal,
+                shippingTotal,
+                grandTotal,
                 isOpen,
                 setIsOpen,
             }}

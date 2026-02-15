@@ -71,7 +71,6 @@ export default function Shop() {
   };
 
   // Filter products based on vehicle compatibility
-  // Filter products based on vehicle compatibility
   const filteredProducts = (make || model) ? products.filter(product => {
     // If product has no compatible_vehicles, it's universal (show for all)
     if (!product.compatible_vehicles) return true;
@@ -80,20 +79,24 @@ export default function Shop() {
     const searchModel = model?.toLowerCase();
     const searchMake = make?.toLowerCase();
 
+    // Check if ANY of the product's compatible vehicles match the search criteria
     return compatibleVehicles.some(vehicle => {
-      // If user selected a model
+      // If user selected a specific model
       if (searchModel) {
-        // Match if the vehicle string refers to this specific model
+        // Exact model match (e.g., "virtus" matches search for "Virtus")
+        if (vehicle === searchModel) return true;
+        // Model name contains the search term (for variations like "Virtus GT")
         if (vehicle.includes(searchModel)) return true;
-        // OR match if the product is generic for the entire Make (e.g. "Volkswagen" or "Tata")
-        // But NOT if it's for a different model of the same make (handled by the includes check above)
+        // Product is marked for entire make (e.g., "volkswagen" matches any VW model)
         if (searchMake && vehicle === searchMake) return true;
+        // No match - this product is NOT for the searched model
         return false;
       }
 
-      // If user only selected a make
+      // If user only selected a make (no specific model)
       if (searchMake) {
-        return vehicle.includes(searchMake);
+        // Match if vehicle is the make name OR contains the make name
+        return vehicle === searchMake || vehicle.includes(searchMake);
       }
 
       return false;

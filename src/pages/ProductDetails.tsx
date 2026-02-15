@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, ShoppingCart, ArrowLeft, Package, Check } from 'lucide-react';
+import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Product {
@@ -22,6 +22,8 @@ interface Product {
     product_type: string | null;
     is_active: boolean;
     delivery_timeline: string | null;
+    stock_status: string | null;
+    shipping_cost: number | null;
 }
 
 export default function ProductDetails() {
@@ -29,8 +31,11 @@ export default function ProductDetails() {
     const navigate = useNavigate();
     const { addToCart } = useCart();
     const [product, setProduct] = useState<Product | null>(null);
-    const [selectedImage, setSelectedImage] = useState<string>('');
     const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState<string>('');
+    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+    const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -48,8 +53,32 @@ export default function ProductDetails() {
                 .single();
 
             if (error) throw error;
-            setProduct(data as any);
-            setSelectedImage((data as any).image_url || ((data as any).images?.[0]) || '');
+            const currentProduct = data as any;
+            setProduct(currentProduct);
+            setSelectedImage(currentProduct.image_url || (currentProduct.images?.[0]) || '');
+
+            // Fetch related products
+            if (currentProduct.category) {
+                const { data: relatedData } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('category', currentProduct.category)
+                    .neq('id', currentProduct.id)
+                    .limit(4);
+
+                if (relatedData) setRelatedProducts(relatedData as any);
+            }
+
+            // Handle Recently Viewed
+            const viewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+            // Remove current product if it exists to avoid duplicates
+            const filteredViewed = viewed.filter((p: Product) => p.id !== currentProduct.id);
+            // Add current product to start
+            const newViewed = [currentProduct, ...filteredViewed].slice(0, 4);
+            localStorage.setItem('recentlyViewed', JSON.stringify(newViewed));
+            // Set recently viewed state (excluding current product for display)
+            setRecentlyViewed(filteredViewed.slice(0, 4));
+
         } catch (error: any) {
             toast.error('Failed to load product');
             navigate('/shop');
@@ -65,6 +94,38 @@ export default function ProductDetails() {
             maximumFractionDigits: 0,
         }).format(price);
     };
+
+    const ProductCard = ({ product }: { product: Product }) => (
+        <div
+            onClick={() => navigate(`/product/${product.id}`)}
+            className="group cursor-pointer space-y-3"
+        >
+            <div className="aspect-square rounded-xl overflow-hidden bg-secondary/20 border border-border relative">
+                {product.image_url ? (
+                    <img
+                        src={product.image_url}
+                        alt={product.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                        <Package className="w-12 h-12 text-muted-foreground/30" />
+                    </div>
+                )}
+                {product.stock_status === 'out_of_stock' && (
+                    <div className="absolute top-2 right-2 bg-destructive/90 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                        Sold Out
+                    </div>
+                )}
+            </div>
+            <div>
+                <h3 className="font-display font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                    {product.title}
+                </h3>
+                <p className="text-muted-foreground text-sm mt-1">{formatPrice(product.price)}</p>
+            </div>
+        </div>
+    );
 
     if (loading) {
         return (
@@ -106,7 +167,7 @@ export default function ProductDetails() {
                     Back
                 </Button>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-20">
                     <div className="space-y-6">
                         <div className="bg-white rounded-3xl overflow-hidden aspect-square border border-border flex items-center justify-center max-h-[600px] shadow-sm">
                             {selectedImage ? (
@@ -177,27 +238,97 @@ export default function ProductDetails() {
                         </div>
 
                         <div className="pt-4 space-y-4">
+                            {/* Terms and Conditions Checkbox */}
+                            <div className="flex items-start space-x-3 p-4 bg-secondary/20 rounded-lg border border-border/50">
+                                <input
+                                    type="checkbox"
+                                    id="terms"
+                                    checked={termsAccepted}
+                                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                                    className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                />
+                                <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer select-none">
+                                    I agree to the <span className="text-primary hover:underline">Terms & Conditions</span> regarding shipping, returns, and compatibility.
+                                </label>
+                            </div>
+
                             <div className="flex flex-col gap-4 sm:flex-row">
                                 <Button
                                     size="lg"
                                     className="btn-primary flex-1 text-lg h-14"
                                     onClick={() => addToCart(product)}
+                                    disabled={product.stock_status === 'out_of_stock' || !termsAccepted}
                                 >
                                     <ShoppingCart className="w-5 h-5 mr-2" />
-                                    Add to Cart
+                                    {product.stock_status === 'out_of_stock' ? 'Out of Stock' :
+                                        product.stock_status === 'pre_order' ? 'Pre-Order Now' : 'Add to Cart'}
                                 </Button>
                             </div>
 
+                            {!termsAccepted && product.stock_status !== 'out_of_stock' && (
+                                <p className="text-xs text-muted-foreground text-center">
+                                    Please accept the terms and conditions to proceed
+                                </p>
+                            )}
+
+                            {/* Stock Status */}
+                            {product.stock_status === 'out_of_stock' ? (
+                                <p className="text-sm text-destructive flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" />
+                                    Currently out of stock
+                                </p>
+                            ) : product.stock_status === 'pre_order' ? (
+                                <p className="text-sm text-yellow-500 flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" />
+                                    Available for pre-order
+                                </p>
+                            ) : (
+                                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                                    <Check className="w-4 h-4 text-green-500" />
+                                    In stock and ready to ship
+                                </p>
+                            )}
+
+                            {/* Shipping Info */}
                             <p className="text-sm text-muted-foreground flex items-center gap-2">
-                                <Check className="w-4 h-4 text-green-500" />
-                                In stock and ready to ship
+                                <Truck className="w-4 h-4" />
+                                {product.shipping_cost && product.shipping_cost > 0 ? (
+                                    <span><strong>Shipping:</strong> ₹{product.shipping_cost} (packing & shipping charges)</span>
+                                ) : (
+                                    <span className="text-green-500"><strong>Free Shipping</strong></span>
+                                )}
                             </p>
+
                             <p className="text-sm text-muted-foreground mt-2">
-                                <strong>Delivery:</strong> {(product as any).delivery_timeline || 'Standard Delivery: 5-7 Business Days (refer to Shipping Policy for details)'}
+                                <strong>Delivery:</strong> {product.delivery_timeline || 'Standard Delivery: 5-7 Business Days (refer to Shipping Policy for details)'}
                             </p>
                         </div>
                     </div>
                 </div>
+
+                {/* Related Products */}
+                {relatedProducts.length > 0 && (
+                    <div className="mb-20">
+                        <h2 className="font-display text-2xl md:text-3xl mb-8">Related Products</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {relatedProducts.map(p => (
+                                <ProductCard key={p.id} product={p} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Recently Viewed */}
+                {recentlyViewed.length > 0 && (
+                    <div>
+                        <h2 className="font-display text-2xl md:text-3xl mb-8">Recently Viewed</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {recentlyViewed.map(p => (
+                                <ProductCard key={p.id} product={p} />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </main>
 
             <Footer />

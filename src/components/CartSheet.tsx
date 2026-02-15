@@ -5,7 +5,7 @@ import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const CartSheet = () => {
-    const { items, isOpen, setIsOpen, updateQuantity, removeFromCart, cartTotal } = useCart();
+    const { items, isOpen, setIsOpen, updateQuantity, removeFromCart, cartTotal, shippingTotal, grandTotal } = useCart();
     const navigate = useNavigate();
 
     const formatPrice = (price: number) => {
@@ -104,14 +104,19 @@ export const CartSheet = () => {
                 </div>
 
                 {items.length > 0 && (
-                    <div className="border-t pt-6 space-y-4">
-                        <div className="flex items-center justify-between text-base font-medium">
+                    <div className="border-t pt-6 space-y-3">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
                             <p>Subtotal</p>
                             <p>{formatPrice(cartTotal)}</p>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                            Shipping and taxes calculated at checkout.
-                        </p>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <p>Shipping</p>
+                            <p>{shippingTotal > 0 ? formatPrice(shippingTotal) : <span className="text-green-500">Free</span>}</p>
+                        </div>
+                        <div className="flex items-center justify-between text-base font-medium border-t pt-3">
+                            <p>Total</p>
+                            <p>{formatPrice(grandTotal)}</p>
+                        </div>
                         <Button className="w-full btn-primary h-12 text-lg" onClick={handleCheckout}>
                             Checkout
                         </Button>

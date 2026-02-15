@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, FileText, Gift, MessageSquare, LayoutDashboard, Package, Instagram, Ticket, Users } from 'lucide-react';
+import { Loader2, FileText, Gift, MessageSquare, LayoutDashboard, Package, Instagram, Ticket, Users, Mail } from 'lucide-react';
 import BlogManager from '@/components/admin/BlogManager';
 import OffersManager from '@/components/admin/OffersManager';
 import TestimonialsManager from '@/components/admin/TestimonialsManager';
@@ -13,6 +13,7 @@ import ProductsManager from '@/components/admin/ProductsManager';
 import InstagramManager from '@/components/admin/InstagramManager';
 import CouponsManager from '@/components/admin/CouponsManager';
 import UsersManager from '@/components/admin/UsersManager';
+import NewsletterManager from '@/components/admin/NewsletterManager';
 
 export default function Admin() {
   const [pendingReviews, setPendingReviews] = useState(0);
@@ -71,7 +72,7 @@ export default function Admin() {
           </div>
 
           <Tabs defaultValue="products" className="w-full">
-            <TabsList className="grid w-full grid-cols-7 mb-8">
+            <TabsList className="grid w-full grid-cols-8 mb-8">
               <TabsTrigger value="products" className="flex items-center gap-2">
                 <Package className="w-4 h-4" />
                 <span className="hidden sm:inline">Products</span>
@@ -105,6 +106,10 @@ export default function Admin() {
                 <Users className="w-4 h-4" />
                 <span className="hidden sm:inline">Users</span>
               </TabsTrigger>
+              <TabsTrigger value="newsletter" className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                <span className="hidden sm:inline">Newsletter</span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="products">
@@ -133,6 +138,10 @@ export default function Admin() {
 
             <TabsContent value="users">
               <UsersManager />
+            </TabsContent>
+
+            <TabsContent value="newsletter">
+              <NewsletterManager />
             </TabsContent>
           </Tabs>
         </div>

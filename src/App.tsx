@@ -11,6 +11,7 @@ import BlogPost from "./pages/BlogPost";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import Orders from "./pages/Orders";
+import Checkout from "./pages/Checkout";
 import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
 import Profile from "./pages/Profile";
@@ -44,6 +45,7 @@ const AppContent = () => {
           <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
           <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
           <Route path="/orders" element={<PageTransition><Orders /></PageTransition>} />
+          <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
           <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
           <Route path="/product/:id" element={<PageTransition><ProductDetails /></PageTransition>} />
           <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />

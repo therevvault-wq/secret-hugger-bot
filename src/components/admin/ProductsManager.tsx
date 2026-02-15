@@ -33,6 +33,8 @@ interface Product {
   created_at: string;
   delivery_timeline: string | null;
   compatible_vehicles: string | null;
+  stock_status: string | null;
+  shipping_cost: number | null;
 }
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
@@ -72,6 +74,8 @@ export default function ProductsManager() {
     sort_order: 0,
     delivery_timeline: '',
     compatible_vehicles: '',
+    stock_status: 'in_stock',
+    shipping_cost: '',
   });
 
   // Form persistence
@@ -189,6 +193,8 @@ export default function ProductsManager() {
       sort_order: products.length,
       delivery_timeline: '',
       compatible_vehicles: '',
+      stock_status: 'in_stock',
+      shipping_cost: '',
     });
     setDialogOpen(true);
   };
@@ -208,6 +214,8 @@ export default function ProductsManager() {
       sort_order: product.sort_order ?? 0,
       delivery_timeline: product.delivery_timeline || '',
       compatible_vehicles: product.compatible_vehicles || '',
+      stock_status: product.stock_status || 'in_stock',
+      shipping_cost: product.shipping_cost?.toString() || '',
     });
     setDialogOpen(true);
   };
@@ -233,6 +241,8 @@ export default function ProductsManager() {
         sort_order: formData.sort_order,
         delivery_timeline: formData.delivery_timeline || null,
         compatible_vehicles: formData.compatible_vehicles || null,
+        stock_status: formData.stock_status || 'in_stock',
+        shipping_cost: formData.shipping_cost ? parseFloat(formData.shipping_cost) : null,
       };
 
       if (editingProduct) {
@@ -563,6 +573,35 @@ export default function ProductsManager() {
                 placeholder="Example: 7-14 business days"
               />
               <p className="text-[10px] text-muted-foreground mt-1">Shown on product page</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Stock Status</Label>
+                <Select
+                  value={formData.stock_status}
+                  onValueChange={(value) => setFormData({ ...formData, stock_status: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="in_stock">In Stock</SelectItem>
+                    <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                    <SelectItem value="pre_order">Pre-Order</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Shipping Cost (₹)</Label>
+                <Input
+                  type="number"
+                  value={formData.shipping_cost}
+                  onChange={(e) => setFormData({ ...formData, shipping_cost: e.target.value })}
+                  placeholder="0 = Free"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">Leave empty for free shipping</p>
+              </div>
             </div>
 
             <div>
