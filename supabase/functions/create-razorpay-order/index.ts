@@ -28,18 +28,28 @@ serve(async (req) => {
         } = await supabaseClient.auth.getUser()
 
         if (!user) {
+            console.error('User not found in request context')
             throw new Error('User not found')
         }
 
         const { amount, currency = 'INR', receipt, notes } = await req.json()
 
         if (!amount) {
+            console.error('Amount is required but missing')
             throw new Error('Amount is required')
         }
 
+        const key_id = Deno.env.get('RAZORPAY_KEY_ID')
+        const key_secret = Deno.env.get('RAZORPAY_KEY_SECRET')
+
+        if (!key_id || !key_secret) {
+            console.error('Razorpay keys are missing in environment variables')
+            throw new Error('Server configuration error: Missing Razorpay keys')
+        }
+
         const razorpay = new Razorpay({
-            key_id: Deno.env.get('RAZORPAY_KEY_ID')!,
-            key_secret: Deno.env.get('RAZORPAY_KEY_SECRET')!,
+            key_id: key_id,
+            key_secret: key_secret,
         })
 
         const options = {
@@ -49,18 +59,21 @@ serve(async (req) => {
             notes,
         }
 
+        console.log('Creating Razorpay order with options:', JSON.stringify(options))
         const order = await razorpay.orders.create(options)
+        console.log('Razorpay order created successfully:', order.id)
 
         return new Response(
-            JSON.stringify({ ...order, key_id: Deno.env.get('RAZORPAY_KEY_ID') }),
+            JSON.stringify({ ...order, key_id: key_id }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         )
-    } catch (error) {
+    } catch (error: any) {
+        console.error('Error in create-razorpay-order:', error.message)
         return new Response(
             JSON.stringify({ error: error.message }),
             {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 400,
+                status: 200, // Return 200 so client can read the error message
             },
         )
     }

@@ -107,6 +107,10 @@ export default function Checkout() {
 
             if (orderError) throw orderError;
 
+            if (orderData.error) {
+                throw new Error(orderData.error);
+            }
+
             // We need Key ID. For now, assume it's returned or available.
             // If the function returns it (we didn't implement that yet but we should), or if we have it in env.
             // Let's assume we need to fetch it or rely on existing mechanism.
