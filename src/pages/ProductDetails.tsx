@@ -7,8 +7,10 @@ import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck } from 'lucide-react';
+import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { ComponentProps } from 'react';
 
 interface Product {
     id: string;
@@ -24,6 +26,7 @@ interface Product {
     delivery_timeline: string | null;
     stock_status: string | null;
     shipping_cost: number | null;
+    shipping_note: string | null;
 }
 
 export default function ProductDetails() {
@@ -36,6 +39,7 @@ export default function ProductDetails() {
     const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
     const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
     const [termsAccepted, setTermsAccepted] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -70,7 +74,18 @@ export default function ProductDetails() {
             }
 
             // Handle Recently Viewed
-            const viewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+            let viewed: Product[] = [];
+            try {
+                const stored = localStorage.getItem('recentlyViewed');
+                if (stored) {
+                    viewed = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error("Failed to parse recently viewed items", e);
+                // Reset if corrupted
+                localStorage.removeItem('recentlyViewed');
+            }
+
             // Remove current product if it exists to avoid duplicates
             const filteredViewed = viewed.filter((p: Product) => p.id !== currentProduct.id);
             // Add current product to start
@@ -223,15 +238,35 @@ export default function ProductDetails() {
 
                         <div className="border-t border-border/10 pt-8 mt-4">
                             {product.description ? (
-                                <div
-                                    className="prose prose-rev prose-invert max-w-none w-full break-words
-                                    prose-headings:font-display prose-headings:text-foreground prose-headings:mb-4 prose-headings:uppercase prose-headings:tracking-wider
-                                    prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
-                                    prose-strong:text-foreground prose-strong:font-bold
-                                    prose-ul:list-disc prose-ul:pl-5 prose-ul:mb-6 prose-ul:space-y-1
-                                    prose-li:text-muted-foreground"
-                                    dangerouslySetInnerHTML={{ __html: product.description }}
-                                />
+                                <>
+                                    <div className={`relative ${!isExpanded && product.description.length > 500 ? 'max-h-[300px] overflow-hidden' : ''}`}>
+                                        <div
+                                            className="prose prose-rev prose-invert max-w-none w-full break-words
+                                            prose-headings:font-display prose-headings:text-foreground prose-headings:mb-4 prose-headings:uppercase prose-headings:tracking-wider
+                                            prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
+                                            prose-strong:text-foreground prose-strong:font-bold
+                                            prose-ul:list-disc prose-ul:pl-5 prose-ul:mb-6 prose-ul:space-y-1
+                                            prose-li:text-muted-foreground"
+                                            dangerouslySetInnerHTML={{ __html: product.description }}
+                                        />
+                                        {!isExpanded && product.description.length > 500 && (
+                                            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background via-background/80 to-transparent" />
+                                        )}
+                                    </div>
+                                    {product.description.length > 500 && (
+                                        <Button
+                                            variant="ghost"
+                                            className="w-full mt-2 text-primary hover:text-primary hover:bg-primary/10"
+                                            onClick={() => setIsExpanded(!isExpanded)}
+                                        >
+                                            {isExpanded ? (
+                                                <>Read Less <ChevronUp className="ml-2 h-4 w-4" /></>
+                                            ) : (
+                                                <>Read More <ChevronDown className="ml-2 h-4 w-4" /></>
+                                            )}
+                                        </Button>
+                                    )}
+                                </>
                             ) : (
                                 <p className="text-muted-foreground italic">No description available for this product.</p>
                             )}
@@ -298,6 +333,11 @@ export default function ProductDetails() {
                                     <span className="text-green-500"><strong>Free Shipping</strong></span>
                                 )}
                             </p>
+                            {product.shipping_note && (
+                                <p className="text-sm text-yellow-600/90 ml-6 -mt-3 italic">
+                                    {product.shipping_note}
+                                </p>
+                            )}
 
                             <p className="text-sm text-muted-foreground mt-2">
                                 <strong>Delivery:</strong> {product.delivery_timeline || 'Standard Delivery: 5-7 Business Days (refer to Shipping Policy for details)'}

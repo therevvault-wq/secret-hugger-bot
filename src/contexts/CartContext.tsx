@@ -93,8 +93,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const cartTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    // Shipping cost is per item (not multiplied by quantity as shipping is typically per order/item type)
-    const shippingTotal = items.reduce((sum, item) => sum + (item.shipping_cost || 0), 0);
+    // Shipping cost is now calculated per quantity per item
+    const shippingTotal = items.reduce((sum, item) => sum + ((item.shipping_cost || 0) * item.quantity), 0);
     const grandTotal = cartTotal + shippingTotal;
 
     return (

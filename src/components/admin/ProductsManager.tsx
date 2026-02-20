@@ -35,6 +35,7 @@ interface Product {
   compatible_vehicles: string | null;
   stock_status: string | null;
   shipping_cost: number | null;
+  shipping_note: string | null;
 }
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
@@ -76,6 +77,7 @@ export default function ProductsManager() {
     compatible_vehicles: '',
     stock_status: 'in_stock',
     shipping_cost: '',
+    shipping_note: '',
   });
 
   // Form persistence
@@ -195,6 +197,7 @@ export default function ProductsManager() {
       compatible_vehicles: '',
       stock_status: 'in_stock',
       shipping_cost: '',
+      shipping_note: '',
     });
     setDialogOpen(true);
   };
@@ -216,6 +219,7 @@ export default function ProductsManager() {
       compatible_vehicles: product.compatible_vehicles || '',
       stock_status: product.stock_status || 'in_stock',
       shipping_cost: product.shipping_cost?.toString() || '',
+      shipping_note: product.shipping_note || '',
     });
     setDialogOpen(true);
   };
@@ -243,6 +247,7 @@ export default function ProductsManager() {
         compatible_vehicles: formData.compatible_vehicles || null,
         stock_status: formData.stock_status || 'in_stock',
         shipping_cost: formData.shipping_cost ? parseFloat(formData.shipping_cost) : null,
+        shipping_note: formData.shipping_note || null,
       };
 
       if (editingProduct) {
@@ -592,6 +597,7 @@ export default function ProductsManager() {
                   </SelectContent>
                 </Select>
               </div>
+
               <div>
                 <Label>Shipping Cost (₹)</Label>
                 <Input
@@ -602,6 +608,16 @@ export default function ProductsManager() {
                 />
                 <p className="text-[10px] text-muted-foreground mt-1">Leave empty for free shipping</p>
               </div>
+            </div>
+
+            <div>
+              <Label>Shipping Note</Label>
+              <Input
+                value={formData.shipping_note}
+                onChange={(e) => setFormData({ ...formData, shipping_note: e.target.value })}
+                placeholder="e.g. Additional packing charges apply"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Displayed to customers on product page</p>
             </div>
 
             <div>
@@ -682,6 +698,6 @@ export default function ProductsManager() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   );
 }

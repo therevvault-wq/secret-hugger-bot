@@ -20,6 +20,7 @@ interface Product {
   category: string | null;
   is_active: boolean | null;
   compatible_vehicles: string | null;
+  product_type: string | null;
 }
 
 export default function Shop() {
@@ -103,31 +104,18 @@ export default function Shop() {
     });
   }) : products;
 
-  // Group products by category
-  const aestheticsCategories = [
-    'aesthetics', 'body kits', 'spoilers & wings', 'carbon fiber parts',
-    'grilles', 'side skirts', 'diffusers', 'mirror caps', 'exhaust tips',
-    'exterior', 'interior', 'lighting'
-  ];
-
-  const performanceCategories = [
-    'performance', 'air intakes', 'exhaust systems', 'ecu tuning',
-    'suspension', 'brake kits', 'turbo kits', 'intercoolers',
-    'performance filters', 'wheels', 'tires'
-  ];
-
+  // Group products by type
   const aestheticsProducts = filteredProducts.filter(p =>
-    p.category && aestheticsCategories.includes(p.category.toLowerCase())
+    p.product_type === 'Aesthetics'
   );
 
   const performanceProducts = filteredProducts.filter(p =>
-    p.category && performanceCategories.includes(p.category.toLowerCase())
+    p.product_type === 'Performance'
   );
 
-  const otherProducts = filteredProducts.filter(p => {
-    const cat = p.category?.toLowerCase();
-    return !cat || (!aestheticsCategories.includes(cat) && !performanceCategories.includes(cat));
-  });
+  const otherProducts = filteredProducts.filter(p =>
+    !p.product_type || (p.product_type !== 'Aesthetics' && p.product_type !== 'Performance')
+  );
 
   // Apply category filter from URL if present
   const categoryFilteredProducts = categoryFilter

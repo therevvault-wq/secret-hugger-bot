@@ -112,7 +112,7 @@ export const Footer = () => {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://wa.me/919717820775?text=Hi, I'm reaching out from your website and would like to connect for more details"
+                href="https://wa.me/918287220775?text=Hi, I'm reaching out from your website and would like to connect for more details"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary transition-colors"
@@ -187,7 +187,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <a href="tel:+919717820775" className="text-muted-foreground text-sm hover:text-primary transition-colors">+91 82872 20775</a>
+                <a href="tel:+918287220775" className="text-muted-foreground text-sm hover:text-primary transition-colors">+91 82872 20775</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
