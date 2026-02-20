@@ -7,10 +7,10 @@ import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { ComponentProps } from 'react';
+
 
 interface Product {
     id: string;
@@ -39,7 +39,7 @@ export default function ProductDetails() {
     const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
     const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
     const [termsAccepted, setTermsAccepted] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [activeTab, setActiveTab] = useState<'description' | 'shipping'>('description');
 
     useEffect(() => {
         if (id) {
@@ -236,41 +236,6 @@ export default function ProductDetails() {
                             </div>
                         </div>
 
-                        <div className="border-t border-border/10 pt-8 mt-4">
-                            {product.description ? (
-                                <>
-                                    <div className={`relative ${!isExpanded && product.description.length > 500 ? 'max-h-[300px] overflow-hidden' : ''}`}>
-                                        <div
-                                            className="prose prose-rev prose-invert max-w-none w-full break-words
-                                            prose-headings:font-display prose-headings:text-foreground prose-headings:mb-4 prose-headings:uppercase prose-headings:tracking-wider
-                                            prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
-                                            prose-strong:text-foreground prose-strong:font-bold
-                                            prose-ul:list-disc prose-ul:pl-5 prose-ul:mb-6 prose-ul:space-y-1
-                                            prose-li:text-muted-foreground"
-                                            dangerouslySetInnerHTML={{ __html: product.description }}
-                                        />
-                                        {!isExpanded && product.description.length > 500 && (
-                                            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background via-background/80 to-transparent" />
-                                        )}
-                                    </div>
-                                    {product.description.length > 500 && (
-                                        <Button
-                                            variant="ghost"
-                                            className="w-full mt-2 text-primary hover:text-primary hover:bg-primary/10"
-                                            onClick={() => setIsExpanded(!isExpanded)}
-                                        >
-                                            {isExpanded ? (
-                                                <>Read Less <ChevronUp className="ml-2 h-4 w-4" /></>
-                                            ) : (
-                                                <>Read More <ChevronDown className="ml-2 h-4 w-4" /></>
-                                            )}
-                                        </Button>
-                                    )}
-                                </>
-                            ) : (
-                                <p className="text-muted-foreground italic">No description available for this product.</p>
-                            )}
-                        </div>
 
                         <div className="pt-4 space-y-4">
                             {/* Terms and Conditions Checkbox */}
@@ -343,6 +308,110 @@ export default function ProductDetails() {
                                 <strong>Delivery:</strong> {product.delivery_timeline || 'Standard Delivery: 5-7 Business Days (refer to Shipping Policy for details)'}
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                {/* Tabbed Info Section */}
+                <div className="mb-20">
+                    {/* Tab Headers */}
+                    <div className="flex border-b border-border">
+                        <button
+                            onClick={() => setActiveTab('description')}
+                            className={`px-6 py-4 text-sm font-semibold tracking-wide transition-all border-b-2 -mb-px ${activeTab === 'description'
+                                    ? 'border-primary text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            Description
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('shipping')}
+                            className={`px-6 py-4 text-sm font-semibold tracking-wide transition-all border-b-2 -mb-px ${activeTab === 'shipping'
+                                    ? 'border-primary text-foreground'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            Shipping &amp; Return
+                        </button>
+                    </div>
+
+                    {/* Tab Content */}
+                    <div className="pt-8">
+                        {activeTab === 'description' && (
+                            <div className="max-w-3xl">
+                                {product.description ? (
+                                    <div
+                                        className="prose prose-rev prose-invert max-w-none w-full break-words
+                                        prose-headings:font-display prose-headings:text-foreground prose-headings:mb-4 prose-headings:uppercase prose-headings:tracking-wider
+                                        prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
+                                        prose-strong:text-foreground prose-strong:font-bold
+                                        prose-ul:list-disc prose-ul:pl-5 prose-ul:mb-6 prose-ul:space-y-1
+                                        prose-li:text-muted-foreground"
+                                        dangerouslySetInnerHTML={{ __html: product.description }}
+                                    />
+                                ) : (
+                                    <p className="text-muted-foreground italic">No description available for this product.</p>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === 'shipping' && (
+                            <div className="max-w-3xl space-y-8">
+                                <div>
+                                    <h3 className="font-display text-lg uppercase tracking-widest text-foreground mb-4">Shipping Policy</h3>
+                                    <ul className="space-y-3 text-muted-foreground text-sm">
+                                        <li className="flex items-start gap-2">
+                                            <Truck className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                                            <span>
+                                                {product.shipping_cost && product.shipping_cost > 0
+                                                    ? `Shipping charge: ₹${product.shipping_cost} per item (packing & handling included)`
+                                                    : 'Free shipping on this product'}
+                                            </span>
+                                        </li>
+                                        {product.shipping_note && (
+                                            <li className="flex items-start gap-2">
+                                                <AlertCircle className="w-4 h-4 mt-0.5 text-yellow-500 shrink-0" />
+                                                <span>{product.shipping_note}</span>
+                                            </li>
+                                        )}
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
+                                            <span>Estimated delivery: {product.delivery_timeline || '5–7 business days after dispatch'}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
+                                            <span>Orders are processed within 1–2 business days.</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
+                                            <span>Tracking details will be shared via WhatsApp/email once dispatched.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="border-t border-border/30 pt-6">
+                                    <h3 className="font-display text-lg uppercase tracking-widest text-foreground mb-4">Returns &amp; Refunds</h3>
+                                    <ul className="space-y-3 text-muted-foreground text-sm">
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
+                                            <span>Returns accepted within <strong className="text-foreground">7 days</strong> of delivery for damaged or incorrect items.</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
+                                            <span>Items must be unused, in original packaging with all tags intact.</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <AlertCircle className="w-4 h-4 mt-0.5 text-yellow-500 shrink-0" />
+                                            <span>Custom-fit or modified parts are <strong className="text-foreground">not eligible</strong> for return.</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
+                                            <span>To initiate a return, contact us via WhatsApp or email with your order details and photos of the issue.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
