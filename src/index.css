@@ -146,7 +146,7 @@
   }
 
   .container-rev {
-    @apply max-w-7xl mx-auto px-4 sm:px-6;
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-10;
   }
 }
 

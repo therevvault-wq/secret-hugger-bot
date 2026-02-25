@@ -40,7 +40,7 @@ export const InstagramFeed = () => {
 
   return (
     <section className="py-16 bg-background">
-      <div className="container mx-auto px-4">
+      <div className="container-rev">
         {/* Header */}
         <a
           href={instagramUrl}
