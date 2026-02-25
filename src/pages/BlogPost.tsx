@@ -104,7 +104,7 @@ export default function BlogPost() {
         <div className="min-h-screen bg-background">
             <PageTransition>
                 <Navbar />
-                <main className="pt-32 pb-20">
+                <main className="pt-32 pb-20 overflow-x-hidden">
                     <SectionReveal>
                         <div className="container-rev max-w-4xl mx-auto">
                             <Button
@@ -149,7 +149,7 @@ export default function BlogPost() {
                     <SectionReveal delay={0.2}>
                         <div className="container-rev max-w-3xl mx-auto">
                             <article
-                                className="prose prose-lg prose-invert max-w-none"
+                                className="prose prose-lg prose-invert max-w-none overflow-x-hidden break-words"
                                 dangerouslySetInnerHTML={{ __html: post.content }}
                             />
                         </div>
