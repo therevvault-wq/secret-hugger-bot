@@ -77,8 +77,8 @@ export const Navbar = () => {
         <div className="container-rev">
           <div className="flex items-center justify-between h-28">
             {/* Left - Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-6 mr-32">
-              <Link to="/" className="nav-link font-medium text-base">Home</Link>
+            <div className="hidden lg:flex items-center gap-4 mr-32">
+              <Link to="/" className="nav-link font-medium text-sm">Home</Link>
 
               {/* Aesthetics Dropdown */}
               <div
@@ -86,8 +86,8 @@ export const Navbar = () => {
                 onMouseEnter={() => setActiveDropdown("aesthetics")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="nav-link font-medium text-base flex items-center gap-1 py-4">
-                  Aesthetics <ChevronDown className="w-5 h-5" />
+                <button className="nav-link font-medium text-sm flex items-center gap-1 py-4">
+                  Aesthetics <ChevronDown className="w-4 h-4" />
                 </button>
                 {activeDropdown === "aesthetics" && (
                   <div className="absolute top-full left-0 pt-2 z-50">
@@ -124,8 +124,8 @@ export const Navbar = () => {
                 onMouseEnter={() => setActiveDropdown("performance")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="nav-link font-medium text-base flex items-center gap-1 py-4">
-                  Performance <ChevronDown className="w-5 h-5" />
+                <button className="nav-link font-medium text-sm flex items-center gap-1 py-4">
+                  Performance <ChevronDown className="w-4 h-4" />
                 </button>
                 {activeDropdown === "performance" && (
                   <div className="absolute top-full left-0 pt-2 z-50">
@@ -156,9 +156,9 @@ export const Navbar = () => {
                 )}
               </div>
 
-              <Link to="/shop" className="nav-link font-medium text-base">Shop All</Link>
-              <Link to="/about" className="nav-link font-medium text-base">About Us</Link>
-              <Link to="/blog" className="nav-link font-medium text-base">Blog</Link>
+              <Link to="/shop" className="nav-link font-medium text-sm">Shop All</Link>
+              <Link to="/about" className="nav-link font-medium text-sm">About Us</Link>
+              <Link to="/blog" className="nav-link font-medium text-sm">Blog</Link>
             </div>
 
             {/* Center - Logo */}
