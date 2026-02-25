@@ -17,7 +17,7 @@ import {
 import logoNavbar from "@/assets/logo-navbar.png";
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
-const performanceItems = ["Air Intakes", "Exhaust Systems", "ECU Tuning", "Suspension", "Brake Kits", "Turbo Kits", "Intercoolers", "Performance Filters"];
+const performanceItems = ["Ignition System", "Air Intakes & Induction", "Suspensions & Handling", "Braking Upgrades", "Exhausts", "Intercoolers", "Turbo & Boost Management", "Braces", "Wheels & Drivetrain Components"];
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
