@@ -6,7 +6,6 @@ import { BrandCarousel } from "@/components/BrandCarousel";
 import { ShopByCategories } from "@/components/ShopByCategories";
 import { BlogSection } from "@/components/BlogSection";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
-import { AboutSection } from "@/components/AboutSection";
 import { OffersSection } from "@/components/OffersSection";
 import { ContactSection } from "@/components/ContactSection";
 import { InstagramFeed } from "@/components/InstagramFeed";
@@ -79,10 +78,6 @@ const Index = () => {
             <WhyChooseUs />
           </SectionReveal>
 
-          {/* 7. About Us */}
-          <SectionReveal>
-            <AboutSection />
-          </SectionReveal>
 
           {/* 8. Exclusive Offers/Sales */}
           <SectionReveal>
