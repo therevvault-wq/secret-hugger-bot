@@ -36,6 +36,7 @@ interface Product {
   stock_status: string | null;
   shipping_cost: number | null;
   shipping_note: string | null;
+  whatsapp_enabled: boolean;
 }
 
 const aestheticsItems = ["Body Kits", "Spoilers & Wings", "Carbon Fiber Parts", "Grilles", "Side Skirts", "Diffusers", "Mirror Caps", "Exhaust Tips"];
@@ -78,6 +79,7 @@ export default function ProductsManager() {
     stock_status: 'in_stock',
     shipping_cost: '',
     shipping_note: '',
+    whatsapp_enabled: false,
   });
 
   // Form persistence
@@ -198,6 +200,7 @@ export default function ProductsManager() {
       stock_status: 'in_stock',
       shipping_cost: '',
       shipping_note: '',
+      whatsapp_enabled: false,
     });
     setDialogOpen(true);
   };
@@ -220,6 +223,7 @@ export default function ProductsManager() {
       stock_status: product.stock_status || 'in_stock',
       shipping_cost: product.shipping_cost?.toString() || '',
       shipping_note: product.shipping_note || '',
+      whatsapp_enabled: (product as any).whatsapp_enabled ?? false,
     });
     setDialogOpen(true);
   };
@@ -248,6 +252,7 @@ export default function ProductsManager() {
         stock_status: formData.stock_status || 'in_stock',
         shipping_cost: formData.shipping_cost ? parseFloat(formData.shipping_cost) : null,
         shipping_note: formData.shipping_note || null,
+        whatsapp_enabled: formData.whatsapp_enabled,
       };
 
       if (editingProduct) {
@@ -684,6 +689,16 @@ export default function ProductsManager() {
                 }
               />
               <Label>Active (visible on site)</Label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={formData.whatsapp_enabled}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, whatsapp_enabled: checked })
+                }
+              />
+              <Label>Enable WhatsApp Ordering</Label>
             </div>
 
             <div className="flex gap-2 justify-end">

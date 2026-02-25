@@ -6,12 +6,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from 'sonner';
 import { useRazorpay } from "react-razorpay";
-import { Loader2, MapPin, Plus, ShieldCheck, Truck } from 'lucide-react';
+import { Loader2, MapPin, Plus, ShieldCheck, Truck, MessageCircle, CreditCard } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 interface Address {
@@ -37,6 +36,7 @@ export default function Checkout() {
     const [loadingAddresses, setLoadingAddresses] = useState(true);
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
     const [processingPayment, setProcessingPayment] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'whatsapp'>('razorpay');
 
     useEffect(() => {
         if (!user) {
@@ -67,8 +67,7 @@ export default function Checkout() {
             const addressList = data || [];
             setAddresses(addressList);
 
-            // Auto-select default address
-            const defaultAddress = addressList.find(addr => addr.is_default);
+            const defaultAddress = addressList.find((addr: Address) => addr.is_default);
             if (defaultAddress) {
                 setSelectedAddressId(defaultAddress.id);
             } else if (addressList.length > 0) {
@@ -92,7 +91,6 @@ export default function Checkout() {
 
         setProcessingPayment(true);
         try {
-            // 1. Create Order via Edge Function
             const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
                 body: {
                     amount: grandTotal,
@@ -111,10 +109,6 @@ export default function Checkout() {
                 throw new Error(orderData.error);
             }
 
-            // We need Key ID. For now, assume it's returned or available.
-            // If the function returns it (we didn't implement that yet but we should), or if we have it in env.
-            // Let's assume we need to fetch it or rely on existing mechanism.
-            // I'll update the edge function to return key_id as well.
             const keyId = orderData.key_id || 'YOUR_RAZORPAY_KEY_ID_PLACEHOLDER';
 
             const options = {
@@ -126,16 +120,12 @@ export default function Checkout() {
                 order_id: orderData.id,
                 handler: async (response: any) => {
                     try {
-                        // Success - Create Order in DB
-                        // We should ideally verify signature on backend, but for now we'll create the order directly
-
-                        // 1. Create Order record
                         const { data: newOrder, error: createOrderError } = await (supabase as any)
                             .from('orders')
                             .insert({
                                 user_id: user?.id,
                                 total_amount: grandTotal,
-                                status: 'processing', // or 'paid'
+                                status: 'processing',
                                 shipping_address: `${selectedAddress.full_name}, ${selectedAddress.address_line1}, ${selectedAddress.city}, ${selectedAddress.state} ${selectedAddress.postal_code}`,
                                 items: items.map(item => ({
                                     id: item.id,
@@ -149,7 +139,6 @@ export default function Checkout() {
 
                         if (createOrderError) throw createOrderError;
 
-                        // 2. Create Payment record
                         const { error: paymentError } = await (supabase as any)
                             .from('payments')
                             .insert({
@@ -164,7 +153,6 @@ export default function Checkout() {
 
                         if (paymentError) {
                             console.error("Payment record creation failed", paymentError);
-                            // Don't fail the whole flow, the order is created
                         }
 
                         toast.success("Order placed successfully!");
@@ -182,7 +170,7 @@ export default function Checkout() {
                     contact: selectedAddress.phone_number || user?.user_metadata?.phone_number || ''
                 },
                 theme: {
-                    color: "#000000" // Black for RevVault
+                    color: "#000000"
                 },
                 modal: {
                     ondismiss: () => {
@@ -202,6 +190,37 @@ export default function Checkout() {
         }
     };
 
+    const handleWhatsAppCheckout = () => {
+        if (!selectedAddressId) {
+            toast.error("Please select a shipping address");
+            return;
+        }
+        const selectedAddress = addresses.find(a => a.id === selectedAddressId);
+        if (!selectedAddress) return;
+
+        const phone = import.meta.env.VITE_WHATSAPP_NUMBER;
+        const itemsList = items.map(item =>
+            `- ${item.title} x${item.quantity} = ${formatPrice(item.price * item.quantity)}`
+        ).join('\n');
+
+        const message = encodeURIComponent(
+            `Hi! I'd like to place an order:\n\n` +
+            `*Order Items:*\n${itemsList}\n\n` +
+            `*Subtotal:* ${formatPrice(cartTotal)}\n` +
+            `*Shipping:* ${shippingTotal > 0 ? formatPrice(shippingTotal) : 'Free'}\n` +
+            `*Total:* ${formatPrice(grandTotal)}\n\n` +
+            `*Shipping Address:*\n` +
+            `${selectedAddress.full_name}\n` +
+            `${selectedAddress.address_line1}\n` +
+            `${selectedAddress.address_line2 ? selectedAddress.address_line2 + '\n' : ''}` +
+            `${selectedAddress.city}, ${selectedAddress.state} ${selectedAddress.postal_code}\n` +
+            `Phone: ${selectedAddress.phone_number || 'N/A'}\n\n` +
+            `Please confirm my order. Thank you!`
+        );
+
+        window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    };
+
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -216,21 +235,24 @@ export default function Checkout() {
 
             <div className="flex-1 container-rev pt-32 pb-20">
                 <div className="max-w-6xl mx-auto">
-                    <h1 className="font-display text-4xl mb-8">Checkout</h1>
+                    {/* Breadcrumb */}
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+                        <span className="hover:text-foreground cursor-pointer transition-colors" onClick={() => navigate('/shop')}>Shop</span>
+                        <span>/</span>
+                        <span className="text-foreground font-medium">Checkout</span>
+                    </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Left Column - Address & Review */}
-                        <div className="lg:col-span-2 space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+                        {/* Left Column */}
+                        <div className="lg:col-span-7 space-y-8">
 
                             {/* Shipping Address */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <MapPin className="w-5 h-5 text-primary" />
-                                        Shipping Address
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
+                            <div>
+                                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                    <MapPin className="w-5 h-5 text-primary" />
+                                    Shipping Address
+                                </h2>
+                                <div className="rounded-xl border border-border/50 p-5">
                                     {loadingAddresses ? (
                                         <div className="flex justify-center py-8">
                                             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
@@ -247,21 +269,27 @@ export default function Checkout() {
                                         <RadioGroup
                                             value={selectedAddressId}
                                             onValueChange={setSelectedAddressId}
-                                            className="space-y-4"
+                                            className="space-y-3"
                                         >
                                             {addresses.map((address) => (
-                                                <div key={address.id} className={`flex items-start space-x-3 space-y-0 rounded-md border p-4 ${selectedAddressId === address.id ? 'border-primary bg-primary/5' : ''}`}>
+                                                <div
+                                                    key={address.id}
+                                                    className={`flex items-start space-x-3 rounded-lg border p-4 cursor-pointer transition-all ${selectedAddressId === address.id ? 'border-primary bg-primary/5' : 'border-border/50 hover:border-border'}`}
+                                                    onClick={() => setSelectedAddressId(address.id)}
+                                                >
                                                     <RadioGroupItem value={address.id} id={address.id} className="mt-1" />
-                                                    <div className="flex-1 cursor-pointer" onClick={() => setSelectedAddressId(address.id)}>
+                                                    <div className="flex-1">
                                                         <Label htmlFor={address.id} className="font-medium cursor-pointer text-base">
-                                                            {address.full_name} {address.is_default && <span className="text-xs bg-secondary px-2 py-0.5 rounded-full ml-2 text-muted-foreground">Default</span>}
+                                                            {address.full_name}
+                                                            {address.is_default && (
+                                                                <span className="text-xs bg-secondary px-2 py-0.5 rounded-full ml-2 text-muted-foreground">Default</span>
+                                                            )}
                                                         </Label>
                                                         <div className="text-sm text-muted-foreground mt-1 space-y-0.5">
                                                             <p>{address.address_line1}</p>
                                                             {address.address_line2 && <p>{address.address_line2}</p>}
                                                             <p>{address.city}, {address.state} {address.postal_code}</p>
-                                                            <p>{address.country}</p>
-                                                            <p>Phone: {address.phone_number}</p>
+                                                            {address.phone_number && <p>Phone: {address.phone_number}</p>}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -270,93 +298,137 @@ export default function Checkout() {
                                     )}
 
                                     {addresses.length > 0 && (
-                                        <div className="mt-4 pt-4 border-t flex justify-end">
+                                        <div className="mt-4 pt-4 border-t border-border/30 flex justify-end">
                                             <Button variant="ghost" size="sm" onClick={() => navigate('/addresses')}>
                                                 Manage Addresses
                                             </Button>
                                         </div>
                                     )}
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
 
-                            {/* Order Items Review */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Truck className="w-5 h-5 text-primary" />
-                                        Order Items
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
+                            {/* Payment Method */}
+                            <div>
+                                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                    <CreditCard className="w-5 h-5 text-primary" />
+                                    Payment Method
+                                </h2>
+                                <div className="space-y-3">
+                                    <div
+                                        onClick={() => setPaymentMethod('razorpay')}
+                                        className={`rounded-xl border p-4 cursor-pointer transition-all ${paymentMethod === 'razorpay'
+                                            ? 'border-primary bg-primary/5'
+                                            : 'border-border/50 hover:border-border'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-primary' : 'border-muted-foreground/40'}`}>
+                                                {paymentMethod === 'razorpay' && <div className="w-2 h-2 rounded-full bg-primary" />}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium">Pay Online</p>
+                                                <p className="text-sm text-muted-foreground">Credit/Debit Card, UPI, Net Banking via Razorpay</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        onClick={() => setPaymentMethod('whatsapp')}
+                                        className={`rounded-xl border p-4 cursor-pointer transition-all ${paymentMethod === 'whatsapp'
+                                            ? 'border-[#25D366] bg-[#25D366]/5'
+                                            : 'border-border/50 hover:border-border'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'whatsapp' ? 'border-[#25D366]' : 'border-muted-foreground/40'}`}>
+                                                {paymentMethod === 'whatsapp' && <div className="w-2 h-2 rounded-full bg-[#25D366]" />}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium">Order via WhatsApp</p>
+                                                <p className="text-sm text-muted-foreground">Place your order through WhatsApp chat</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column - Order Summary */}
+                        <div className="lg:col-span-5">
+                            <div className="sticky top-24 rounded-xl border border-border/50 bg-card p-6 space-y-6">
+                                <h2 className="text-lg font-semibold">Order Summary</h2>
+
+                                {/* Items with thumbnails */}
+                                <div className="space-y-4">
                                     {items.map((item) => (
-                                        <div key={item.id} className="flex gap-4 py-2">
-                                            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border bg-secondary/20">
+                                        <div key={item.id} className="flex gap-3 items-center">
+                                            <div className="relative h-16 w-16 flex-shrink-0 rounded-lg border bg-white overflow-hidden">
                                                 {item.image_url ? (
-                                                    <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
+                                                    <img src={item.image_url} alt={item.title} className="h-full w-full object-contain p-1" />
                                                 ) : (
                                                     <div className="w-full h-full bg-secondary" />
                                                 )}
+                                                <span className="absolute -top-1.5 -right-1.5 bg-muted-foreground text-background text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-medium">
+                                                    {item.quantity}
+                                                </span>
                                             </div>
-                                            <div className="flex-1">
-                                                <h4 className="font-medium line-clamp-1">{item.title}</h4>
-                                                <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium text-sm line-clamp-1">{item.title}</p>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="font-medium">{formatPrice(item.price * item.quantity)}</p>
-                                            </div>
+                                            <p className="text-sm font-medium flex-shrink-0">{formatPrice(item.price * item.quantity)}</p>
                                         </div>
                                     ))}
-                                </CardContent>
-                            </Card>
+                                </div>
 
-                        </div>
+                                <Separator />
 
-                        {/* Right Column - Summary */}
-                        <div className="lg:col-span-1">
-                            <div className="sticky top-24">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Order Summary</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted-foreground">Subtotal</span>
-                                            <span>{formatPrice(cartTotal)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted-foreground">Shipping</span>
-                                            <span>{shippingTotal > 0 ? formatPrice(shippingTotal) : <span className="text-green-600">Free</span>}</span>
-                                        </div>
-                                        <Separator />
-                                        <div className="flex justify-between font-bold text-lg">
-                                            <span>Total</span>
-                                            <span>{formatPrice(grandTotal)}</span>
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter className="flex flex-col gap-4">
-                                        <Button
-                                            className="w-full btn-primary h-12 text-lg"
-                                            onClick={handlePayment}
-                                            disabled={processingPayment || loadingAddresses || addresses.length === 0}
-                                        >
-                                            {processingPayment ? (
-                                                <>
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                    Processing...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    Pay Now
-                                                </>
-                                            )}
-                                        </Button>
+                                {/* Totals */}
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">Subtotal</span>
+                                        <span>{formatPrice(cartTotal)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">Shipping</span>
+                                        <span>{shippingTotal > 0 ? formatPrice(shippingTotal) : <span className="text-green-600">Free</span>}</span>
+                                    </div>
+                                </div>
 
-                                        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                                            <ShieldCheck className="w-3 h-3" />
-                                            Secure Payment via Razorpay
-                                        </div>
-                                    </CardFooter>
-                                </Card>
+                                <Separator />
+
+                                <div className="flex justify-between text-lg font-bold">
+                                    <span>Total</span>
+                                    <span>{formatPrice(grandTotal)}</span>
+                                </div>
+
+                                {/* Action Button */}
+                                {paymentMethod === 'razorpay' ? (
+                                    <Button
+                                        className="w-full h-12 text-base font-semibold bg-foreground text-background hover:bg-foreground/90"
+                                        onClick={handlePayment}
+                                        disabled={processingPayment || loadingAddresses || addresses.length === 0}
+                                    >
+                                        {processingPayment ? (
+                                            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
+                                        ) : (
+                                            <>Pay {formatPrice(grandTotal)}</>
+                                        )}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        className="w-full h-12 text-base font-semibold bg-[#25D366] hover:bg-[#1da851] text-white"
+                                        onClick={handleWhatsAppCheckout}
+                                        disabled={loadingAddresses || addresses.length === 0}
+                                    >
+                                        <MessageCircle className="w-5 h-5 mr-2" />
+                                        Order via WhatsApp
+                                    </Button>
+                                )}
+
+                                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                                    <ShieldCheck className="w-3 h-3" />
+                                    {paymentMethod === 'razorpay' ? 'Secure Payment via Razorpay' : 'Direct communication via WhatsApp'}
+                                </div>
                             </div>
                         </div>
                     </div>

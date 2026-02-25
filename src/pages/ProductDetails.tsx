@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { ComponentProps } from 'react';
@@ -27,6 +27,7 @@ interface Product {
     stock_status: string | null;
     shipping_cost: number | null;
     shipping_note: string | null;
+    whatsapp_enabled: boolean;
 }
 
 export default function ProductDetails() {
@@ -110,6 +111,19 @@ export default function ProductDetails() {
             currency: 'INR',
             maximumFractionDigits: 0,
         }).format(price);
+    };
+
+    const getWhatsAppUrl = () => {
+        const phone = import.meta.env.VITE_WHATSAPP_NUMBER;
+        const message = encodeURIComponent(
+            `Hi! I'm interested in ordering:\n\n` +
+            `*${product?.title}*\n` +
+            `Price: ${formatPrice(product?.price || 0)}\n` +
+            `${product?.stock_status === 'pre_order' ? 'Status: Pre-Order\n' : ''}` +
+            `\nProduct link: ${window.location.href}\n\n` +
+            `Please share more details about this product.`
+        );
+        return `https://wa.me/${phone}?text=${message}`;
     };
 
     const ProductCard = ({ product }: { product: Product }) => (
@@ -344,6 +358,18 @@ export default function ProductDetails() {
                                     {product.stock_status === 'out_of_stock' ? 'Out of Stock' :
                                         product.stock_status === 'pre_order' ? 'Pre-Order Now' : 'Add to Cart'}
                                 </Button>
+
+                                {(product as any).whatsapp_enabled && (
+                                    <Button
+                                        size="lg"
+                                        className="flex-1 text-lg h-14 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(37,211,102,0.4)]"
+                                        onClick={() => window.open(getWhatsAppUrl(), '_blank')}
+                                        disabled={!termsAccepted}
+                                    >
+                                        <MessageCircle className="w-5 h-5 mr-2" />
+                                        Order via WhatsApp
+                                    </Button>
+                                )}
                             </div>
 
                             {!termsAccepted && product.stock_status !== 'out_of_stock' && (
