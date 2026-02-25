@@ -147,6 +147,16 @@ export const Testimonials = () => {
     currentSlide * ITEMS_PER_SLIDE + ITEMS_PER_SLIDE
   );
 
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || totalSlides <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % totalSlides);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [paused, totalSlides]);
+
   if (loading) {
     return (
       <section className="section-padding">
@@ -170,7 +180,11 @@ export const Testimonials = () => {
         </div>
 
         {/* 3-column testimonial grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
           {slideTestimonials.map((testimonial) => (
             <div
               key={testimonial.id}

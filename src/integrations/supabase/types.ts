@@ -138,6 +138,7 @@ export type Database = {
           sort_order: number | null
           title: string
           updated_at: string
+          warranty_info: string | null
           whatsapp_enabled: boolean | null
         }
         Insert: {
@@ -152,6 +153,7 @@ export type Database = {
           sort_order?: number | null
           title: string
           updated_at?: string
+          warranty_info?: string | null
           whatsapp_enabled?: boolean | null
         }
         Update: {
@@ -166,6 +168,7 @@ export type Database = {
           sort_order?: number | null
           title?: string
           updated_at?: string
+          warranty_info?: string | null
           whatsapp_enabled?: boolean | null
         }
         Relationships: []

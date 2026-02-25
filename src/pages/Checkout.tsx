@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from 'sonner';
 import { useRazorpay } from "react-razorpay";
-import { Loader2, MapPin, Plus, ShieldCheck, Truck, MessageCircle, CreditCard } from 'lucide-react';
+import { Loader2, MapPin, Plus, ShieldCheck, Truck, MessageCircle, CreditCard, CheckCircle2, PartyPopper } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 interface Address {
@@ -37,6 +37,7 @@ export default function Checkout() {
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
     const [processingPayment, setProcessingPayment] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'whatsapp'>('razorpay');
+    const [orderSuccess, setOrderSuccess] = useState(false);
 
     useEffect(() => {
         if (!user) {
@@ -155,9 +156,10 @@ export default function Checkout() {
                             console.error("Payment record creation failed", paymentError);
                         }
 
-                        toast.success("Order placed successfully!");
                         clearCart();
-                        navigate('/orders');
+                        setProcessingPayment(false);
+                        setOrderSuccess(true);
+                        setTimeout(() => navigate('/orders'), 3000);
 
                     } catch (err: any) {
                         console.error(err);
@@ -228,6 +230,29 @@ export default function Checkout() {
             maximumFractionDigits: 0,
         }).format(price);
     };
+
+    if (orderSuccess) {
+        return (
+            <div className="min-h-screen bg-background flex flex-col">
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="text-center space-y-6 animate-in fade-in zoom-in duration-500 p-8">
+                        <div className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
+                            <CheckCircle2 className="w-14 h-14 text-green-500" />
+                        </div>
+                        <h1 className="font-display text-4xl md:text-5xl text-foreground">Order Placed!</h1>
+                        <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                            Thank you for your order. You will be redirected to your orders shortly.
+                        </p>
+                        <Button variant="outline" onClick={() => navigate('/orders')}>
+                            View Orders
+                        </Button>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-background flex flex-col">

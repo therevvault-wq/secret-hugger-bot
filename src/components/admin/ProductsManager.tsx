@@ -36,6 +36,7 @@ interface Product {
   stock_status: string | null;
   shipping_cost: number | null;
   shipping_note: string | null;
+  warranty_info: string | null;
   whatsapp_enabled: boolean;
 }
 
@@ -79,6 +80,7 @@ export default function ProductsManager() {
     stock_status: 'in_stock',
     shipping_cost: '',
     shipping_note: '',
+    warranty_info: '',
     whatsapp_enabled: false,
   });
 
@@ -200,6 +202,7 @@ export default function ProductsManager() {
       stock_status: 'in_stock',
       shipping_cost: '',
       shipping_note: '',
+      warranty_info: '',
       whatsapp_enabled: false,
     });
     setDialogOpen(true);
@@ -223,6 +226,7 @@ export default function ProductsManager() {
       stock_status: product.stock_status || 'in_stock',
       shipping_cost: product.shipping_cost?.toString() || '',
       shipping_note: product.shipping_note || '',
+      warranty_info: (product as any).warranty_info || '',
       whatsapp_enabled: (product as any).whatsapp_enabled ?? false,
     });
     setDialogOpen(true);
@@ -252,6 +256,7 @@ export default function ProductsManager() {
         stock_status: formData.stock_status || 'in_stock',
         shipping_cost: formData.shipping_cost ? parseFloat(formData.shipping_cost) : null,
         shipping_note: formData.shipping_note || null,
+        warranty_info: formData.warranty_info || null,
         whatsapp_enabled: formData.whatsapp_enabled,
       };
 
@@ -623,6 +628,16 @@ export default function ProductsManager() {
                 placeholder="e.g. Additional packing charges apply"
               />
               <p className="text-[10px] text-muted-foreground mt-1">Displayed to customers on product page</p>
+            </div>
+
+            <div>
+              <Label>Warranty Info</Label>
+              <Input
+                value={formData.warranty_info}
+                onChange={(e) => setFormData({ ...formData, warranty_info: e.target.value })}
+                placeholder="e.g. 6 months manufacturer warranty"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Leave empty to hide warranty section on product page</p>
             </div>
 
             <div>

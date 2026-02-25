@@ -126,7 +126,7 @@ export const VehicleSelector = () => {
 
             <Button
               className="w-full h-12 sm:h-14 btn-primary text-base sm:text-lg"
-              disabled={!selectedFuelType}
+              disabled={!selectedModel}
               onClick={handleSearch}
             >
               <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />

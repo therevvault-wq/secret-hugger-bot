@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
+import { Loader2, ShoppingCart, ArrowLeft, Package, Check, AlertCircle, Truck, ChevronDown, ChevronUp, MessageCircle, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { ComponentProps } from 'react';
@@ -27,6 +27,7 @@ interface Product {
     stock_status: string | null;
     shipping_cost: number | null;
     shipping_note: string | null;
+    warranty_info: string | null;
     whatsapp_enabled: boolean;
 }
 
@@ -414,6 +415,16 @@ export default function ProductDetails() {
                             <p className="text-sm text-muted-foreground mt-2">
                                 <strong>Delivery:</strong> {product.delivery_timeline || 'Standard Delivery: 5-7 Business Days (refer to Shipping Policy for details)'}
                             </p>
+
+                            {/* Warranty Info */}
+                            {(product as any).warranty_info && (
+                                <div className="flex items-center gap-2 mt-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                    <ShieldCheck className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                    <p className="text-sm text-green-400 font-medium">
+                                        {(product as any).warranty_info}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
