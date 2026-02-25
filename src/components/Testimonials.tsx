@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Star, Quote, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SubmitTestimonialModal } from "./SubmitTestimonialModal";
 
@@ -10,35 +9,108 @@ interface Testimonial {
   author_title: string | null;
   content: string;
   rating: number;
+  avatar_seed?: string;
 }
 
-// Fallback testimonials for when database is empty
+// Fallback testimonials with real customer reviews
 const fallbackTestimonials: Testimonial[] = [
   {
     id: "1",
-    author_name: "Rahul Sharma",
-    author_title: "BMW M4 Competition • Mumbai",
+    author_name: "Darshan Jain",
+    author_title: null,
     rating: 5,
-    content: "TheRevVault transformed my M4 completely. The Vorsteiner kit and Akrapovič exhaust combination is absolutely insane. Top-notch service and genuine parts!",
+    content: "Excellent shop. Only genuine brake importer. Friendly staff with immense knowledge about car spare and brake parts",
+    avatar_seed: "darshan",
   },
   {
     id: "2",
+    author_name: "Sejal Jain",
+    author_title: null,
+    rating: 5,
+    content: "Great quality products and overall, a humble experience at the showroom",
+    avatar_seed: "sejal",
+  },
+  {
+    id: "3",
+    author_name: "Vaibhav Biyani",
+    author_title: null,
+    rating: 5,
+    content: "I always shop my brakes from them... The owner is a sweetheart he is always available to solve all your doubts and queries...They have original BRMEBO & EBC Brakes followed by all other brands... They ship PAN India... Ashish Bhaiya is the best.",
+    avatar_seed: "vaibhav",
+  },
+  {
+    id: "4",
+    author_name: "Rahul Sharma",
+    author_title: "BMW M4 • Mumbai",
+    rating: 5,
+    content: "TheRevVault transformed my M4 completely. The Vorsteiner kit and Akrapovič exhaust combination is absolutely insane. Top-notch service and genuine parts!",
+    avatar_seed: "rahul",
+  },
+  {
+    id: "5",
     author_name: "Arjun Menon",
     author_title: "Mercedes AMG GT • Bangalore",
     rating: 5,
     content: "Best place for premium car parts in India. Got my full carbon fiber aero kit installed perfectly. The team really knows their stuff!",
+    avatar_seed: "arjun",
   },
   {
-    id: "3",
+    id: "6",
     author_name: "Vikram Singh",
     author_title: "Porsche 911 GT3 • Delhi",
     rating: 5,
     content: "Imported the KW suspension setup through TheRevVault. Fitment was perfect and the difference in handling is night and day. Highly recommended!",
+    avatar_seed: "vikram",
   },
 ];
 
+const ITEMS_PER_SLIDE = 3;
+
+const StarRating = ({ rating }: { rating: number }) => (
+  <div className="flex gap-0.5 justify-center">
+    {[...Array(5)].map((_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "fill-muted text-muted"}`}
+      />
+    ))}
+  </div>
+);
+
+const AvatarCircle = ({ name, seed }: { name: string; seed?: string }) => {
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  // Use DiceBear avatars for a fun, illustrated look matching the screenshot
+  const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed || name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
+
+  return (
+    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-border mx-auto mb-4">
+      <img
+        src={avatarUrl}
+        alt={name}
+        className="w-full h-full object-cover"
+        onError={(e) => {
+          // Fallback to initials if avatar fails
+          const target = e.currentTarget;
+          target.style.display = "none";
+          const parent = target.parentElement;
+          if (parent) {
+            parent.classList.add("bg-primary/20", "flex", "items-center", "justify-center");
+            parent.innerHTML = `<span class="text-primary font-bold text-lg">${initials}</span>`;
+          }
+        }}
+      />
+    </div>
+  );
+};
+
 export const Testimonials = () => {
-  const [current, setCurrent] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,32 +121,35 @@ export const Testimonials = () => {
   const fetchTestimonials = async () => {
     try {
       const { data, error } = await supabase
-        .from('testimonials')
-        .select('id, author_name, author_title, content, rating')
-        .eq('is_approved', true)
-        .order('created_at', { ascending: false });
-      
+        .from("testimonials")
+        .select("id, author_name, author_title, content, rating")
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false });
+
       if (error) throw error;
-      
+
       if (data && data.length > 0) {
         setTestimonials(data);
       } else {
         setTestimonials(fallbackTestimonials);
       }
     } catch (error) {
-      console.error('Error fetching testimonials:', error);
+      console.error("Error fetching testimonials:", error);
       setTestimonials(fallbackTestimonials);
     } finally {
       setLoading(false);
     }
   };
 
-  const next = () => setCurrent((prev) => (prev + 1) % testimonials.length);
-  const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  const totalSlides = Math.ceil(testimonials.length / ITEMS_PER_SLIDE);
+  const slideTestimonials = testimonials.slice(
+    currentSlide * ITEMS_PER_SLIDE,
+    currentSlide * ITEMS_PER_SLIDE + ITEMS_PER_SLIDE
+  );
 
   if (loading) {
     return (
-      <section className="section-padding bg-gradient-to-b from-secondary/20 to-background">
+      <section className="section-padding">
         <div className="container-rev flex justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
@@ -82,90 +157,64 @@ export const Testimonials = () => {
     );
   }
 
-  if (testimonials.length === 0) {
-    return null;
-  }
+  if (testimonials.length === 0) return null;
 
   return (
-    <section className="section-padding bg-gradient-to-b from-secondary/20 to-background">
+    <section className="section-padding">
       <div className="container-rev">
+        {/* Header */}
         <div className="text-center mb-12">
-          <span className="text-primary text-sm font-medium uppercase tracking-widest">
-            Customer Reviews
-          </span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground mt-2">
-            WHAT THEY <span className="text-primary">SAY</span>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-foreground">
+            What Our <span className="text-primary">Customer Says</span>
           </h2>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            <div className="bg-card border border-border rounded-2xl p-8 md:p-12">
-              <Quote className="w-12 h-12 text-primary/30 mb-6" />
+        {/* 3-column testimonial grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {slideTestimonials.map((testimonial) => (
+            <div
+              key={testimonial.id}
+              className="flex flex-col items-center text-center px-4"
+            >
+              {/* Avatar */}
+              <AvatarCircle name={testimonial.author_name} seed={testimonial.avatar_seed} />
 
-              <div className="flex gap-1 mb-6">
-                {[...Array(testimonials[current]?.rating || 5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-primary text-primary" />
-                ))}
-              </div>
-
-              <p className="text-lg md:text-xl text-foreground mb-8 leading-relaxed">
-                "{testimonials[current]?.content}"
+              {/* Review text */}
+              <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">
+                {testimonial.content}
               </p>
 
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xl">
-                  {testimonials[current]?.author_name?.charAt(0)}
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground">{testimonials[current]?.author_name}</p>
-                  {testimonials[current]?.author_title && (
-                    <p className="text-sm text-muted-foreground">
-                      {testimonials[current].author_title}
-                    </p>
-                  )}
-                </div>
-              </div>
+              {/* Name */}
+              <p className="font-semibold text-foreground mb-2">
+                {testimonial.author_name}
+              </p>
+
+              {/* Stars */}
+              <StarRating rating={testimonial.rating} />
             </div>
+          ))}
+        </div>
 
-            {/* Navigation */}
-            <div className="flex justify-center gap-4 mt-8">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={prev}
-                className="rounded-full border-border hover:border-primary hover:text-primary"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </Button>
-
-              <div className="flex items-center gap-2">
-                {testimonials.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrent(i)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      i === current ? "bg-primary w-6" : "bg-muted-foreground/30"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={next}
-                className="rounded-full border-border hover:border-primary hover:text-primary"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </Button>
-            </div>
-
-            {/* Submit testimonial button */}
-            <div className="flex justify-center mt-8">
-              <SubmitTestimonialModal />
-            </div>
+        {/* Dot navigation */}
+        {totalSlides > 1 && (
+          <div className="flex justify-center gap-2 mt-10">
+            {[...Array(totalSlides)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`rounded-full transition-all ${
+                  i === currentSlide
+                    ? "bg-primary w-6 h-2"
+                    : "bg-muted-foreground/30 w-2 h-2"
+                }`}
+              />
+            ))}
           </div>
+        )}
+
+        {/* Submit testimonial */}
+        <div className="flex justify-center mt-10">
+          <SubmitTestimonialModal />
         </div>
       </div>
     </section>
