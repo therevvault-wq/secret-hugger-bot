@@ -115,14 +115,6 @@ export const GaragePromptPopup = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-4 top-4"
-          onClick={handleDismiss}
-        >
-          <X className="w-4 h-4" />
-        </Button>
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
