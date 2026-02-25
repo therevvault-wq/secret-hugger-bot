@@ -7,8 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 interface Blog {
   id: string;
   title: string;
-  excerpt: string;
-  featured_image_url: string;
+  excerpt: string | null;
+  featured_image_url: string | null;
   slug: string;
   read_time?: string | null;
 }
@@ -75,12 +75,18 @@ export const BlogSection = () => {
               to={`/blog/${blog.slug}`}
               className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
             >
-              <div className="aspect-video overflow-hidden">
-                <img
-                  src={blog.featured_image_url}
-                  alt={blog.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+              <div className="aspect-video overflow-hidden bg-secondary/30">
+                {blog.featured_image_url ? (
+                  <img
+                    src={blog.featured_image_url}
+                    alt={blog.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Clock className="w-12 h-12 text-muted-foreground/30" />
+                  </div>
+                )}
               </div>
               <div className="p-6">
                 {blog.read_time && (
@@ -93,7 +99,7 @@ export const BlogSection = () => {
                   {blog.title}
                 </h3>
                 <p className="text-muted-foreground text-sm line-clamp-2">
-                  {blog.excerpt}
+                  {blog.excerpt || "Click to read the full article"}
                 </p>
               </div>
             </Link>

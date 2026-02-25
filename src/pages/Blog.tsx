@@ -13,9 +13,9 @@ interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  excerpt: string;
+  excerpt: string | null;
   content: string;
-  featured_image_url: string;
+  featured_image_url: string | null;
   created_at: string;
   category?: string; // Optional if not yet in DB schema
 }
