@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import MyGarage from "./pages/MyGarage";
 import Addresses from "./pages/Addresses";
 import Coupons from "./pages/Coupons";
+import About from "./pages/About";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -52,6 +53,7 @@ const AppContent = () => {
           <Route path="/garage" element={<PageTransition><MyGarage /></PageTransition>} />
           <Route path="/addresses" element={<PageTransition><Addresses /></PageTransition>} />
           <Route path="/coupons" element={<PageTransition><Coupons /></PageTransition>} />
+          <Route path="/about" element={<PageTransition><About /></PageTransition>} />
           <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
           <Route path="/refund-policy" element={<PageTransition><RefundPolicy /></PageTransition>} />
           <Route path="/terms-of-service" element={<PageTransition><TermsOfService /></PageTransition>} />

@@ -157,6 +157,7 @@ export const Navbar = () => {
               </div>
 
               <Link to="/shop" className="nav-link font-medium text-base">Shop All</Link>
+              <Link to="/about" className="nav-link font-medium text-base">About Us</Link>
               <Link to="/blog" className="nav-link font-medium text-base">Blog</Link>
             </div>
 
