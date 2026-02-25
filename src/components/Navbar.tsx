@@ -77,7 +77,7 @@ export const Navbar = () => {
         <div className="container-rev">
           <div className="flex items-center justify-between h-28">
             {/* Left - Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-4 mr-32">
+            <div className="hidden lg:flex items-center gap-4 mr-32 ml-12">
               <Link to="/" className="nav-link font-medium text-[15px]">Home</Link>
 
               {/* Aesthetics Dropdown */}
