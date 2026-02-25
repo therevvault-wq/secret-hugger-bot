@@ -117,12 +117,12 @@ export default function ProductDetails() {
             onClick={() => navigate(`/product/${product.id}`)}
             className="group cursor-pointer space-y-3"
         >
-            <div className="aspect-square rounded-xl overflow-hidden bg-secondary/20 border border-border relative">
+            <div className="aspect-square rounded-xl overflow-hidden bg-white border border-border relative">
                 {product.image_url ? (
                     <img
                         src={product.image_url}
                         alt={product.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
